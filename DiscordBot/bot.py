@@ -1,4 +1,3 @@
-# bot.py
 import discord
 from discord.ext import commands
 import os
@@ -8,6 +7,7 @@ import re
 import requests
 from report import Report
 from review import Review
+from gemini_detector import GeminiDoxxingDetector
 import pdb
 
 # Set up logging to the console
@@ -17,12 +17,10 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-# There should be a file called 'tokens.json' inside the same folder as this file
 token_path = 'tokens.json'
 if not os.path.isfile(token_path):
     raise Exception(f"{token_path} not found!")
 with open(token_path) as f:
-    # If you get an error here, it means your token is formatted incorrectly. Did you put it in quotes?
     tokens = json.load(f)
     discord_token = tokens['discord']
 
@@ -36,6 +34,18 @@ class ModBot(discord.Client):
         self.mod_channels = {} # Map from guild to the mod channel id for that guild
         self.reports = {} # Map from user IDs to the state of their report
         self.reviews = {}
+        
+        # AI: Initialize Gemini detector
+        try:
+            self.gemini_detector = GeminiDoxxingDetector(
+                project_id=tokens['google_project_id'],
+                location=tokens.get('google_location', 'us-central1')
+            )
+            print("🤖 Gemini AI doxxing detector loaded successfully!")
+        except Exception as e:
+            print(f"❌ Failed to initialize Gemini detector: {e}")
+            print("📝 Bot will continue without AI analysis")
+            self.gemini_detector = None
 
 
     async def on_ready(self):
@@ -143,26 +153,133 @@ class ModBot(discord.Client):
         # Forward the message to the mod channel
         mod_channel = self.mod_channels[message.guild.id]
         await mod_channel.send(f'Forwarded message:\n{message.author.name}: "{message.content}"')
-        scores = self.eval_text(message.content)
-        await mod_channel.send(self.code_format(scores))
+        
+        # Analyze for doxxing and take action
+        analysis_result = await self.eval_text(message)
+        
+        # Only act if doxxing is detected
+        if analysis_result.get('is_doxxing', False):
+            # Send detailed analysis to mod channel
+            formatted_analysis = self.code_format(analysis_result)
+            await mod_channel.send(formatted_analysis)
+            
+            # DELETE the original message and send user notification
+            try:
+                # Get the info types that were detected
+                info_disclosed = analysis_result.get('information_disclosed', {})
+                info_types = info_disclosed.get('info_types_found', [])
+                
+                # Create a user-friendly list of what was detected
+                detected_info = []
+                type_mapping = {
+                    'phone': 'phone number',
+                    'email': 'email address', 
+                    'address': 'address',
+                    'real_name': 'personal name',
+                    'financial': 'financial information',
+                    'government_id': 'ID information',
+                    'social_media': 'social media account',
+                    'workplace': 'workplace information'
+                }
+                
+                for info_type in info_types:
+                    if info_type in type_mapping:
+                        detected_info.append(type_mapping[info_type])
+                    else:
+                        detected_info.append(info_type.replace('_', ' '))
+                
+                # Format the detected info nicely
+                if len(detected_info) == 1:
+                    info_text = detected_info[0]
+                elif len(detected_info) == 2:
+                    info_text = f"{detected_info[0]} and {detected_info[1]}"
+                else:
+                    info_text = f"{', '.join(detected_info[:-1])}, and {detected_info[-1]}"
+                
+                # Delete the original message
+                await message.delete()
+                
+                # Send user notification
+                user_message = f"🛡️ {message.author.mention}, your message was removed because it may contain personal information"
+                if detected_info:
+                    user_message += f" ({info_text})"
+                user_message += ". Please avoid sharing others' private information to protect their privacy and safety."
+                
+                await message.channel.send(user_message)
+                
+                # Log successful deletion to mod channel
+                await mod_channel.send(f"✅ **Automatic Action Taken:** Message deleted and user notified.")
+                
+            except discord.Forbidden:
+                # Bot doesn't have permission to delete messages
+                await mod_channel.send(f"❌ **Permission Error:** Cannot delete messages. Please check bot permissions.")
+            except discord.NotFound:
+                # Message was already deleted
+                await mod_channel.send(f"⚠️ **Note:** Message was already deleted.")
+            except Exception as e:
+                # Other error occurred
+                await mod_channel.send(f"❌ **Error:** Failed to delete message: {str(e)}")
+    
+    async def eval_text(self, message):
+        if not self.gemini_detector:
+            return {
+                'is_doxxing': False,
+                'confidence': 0.0,
+                'reasoning': 'AI detector not available',
+                'original_message': message.content,
+                'author': message.author.display_name
+            }
+        
+        try:
+            # Use Gemini to analyze the message
+            analysis = self.gemini_detector.analyze_for_doxxing(
+                message_content=message.content,
+                author_name=message.author.display_name
+            )
+            
+            # Add original message for reference
+            analysis['original_message'] = message.content
+            analysis['author'] = message.author.display_name
+            
+            return analysis
+            
+        except Exception as e:
+            print(f"❌ Error during AI analysis: {e}")
+            return {
+                'is_doxxing': False,
+                'confidence': 0.0,
+                'reasoning': f'Analysis error: {str(e)}',
+                'original_message': message.content,
+                'author': message.author.display_name
+            }
 
     
-    def eval_text(self, message):
-        ''''
-        TODO: Once you know how you want to evaluate messages in your channel, 
-        insert your code here! This will primarily be used in Milestone 3. 
+    def code_format(self, analysis):
         '''
-        return message
-
-    
-    def code_format(self, text):
-        ''''
-        TODO: Once you know how you want to show that a message has been 
-        evaluated, insert your code here for formatting the string to be 
-        shown in the mod channel. 
+        Format the AI analysis results for doxxing detection only
         '''
-        return "Evaluated: '" + text+ "'"
-
+        # This method now only gets called when doxxing is detected
+        author = analysis.get('author', 'Unknown')
+        original_message = analysis.get('original_message', 'N/A')
+        
+        # Use the detailed formatter for doxxing cases
+        detailed_report = self.gemini_detector.format_detailed_report(analysis)
+        if detailed_report:
+            result = detailed_report
+            result += f"\n\n**Original Message:** `{original_message}`"
+        else:
+            # Fallback if detailed formatter fails
+            confidence = analysis.get('confidence', 0.0)
+            mod_summary = analysis.get('moderator_summary', {})
+            reasoning = mod_summary.get('reasoning', 'No reasoning provided')
+            
+            result = f"🚨 **DOXXING DETECTED**\n"
+            result += f"**Author:** {author}\n"
+            result += f"**Confidence:** {confidence:.0%}\n"
+            result += f"**AI Reasoning:** {reasoning}\n"
+            result += f"**Original Message:** `{original_message}`"
+        
+        return result
 
 client = ModBot()
 client.run(discord_token)
