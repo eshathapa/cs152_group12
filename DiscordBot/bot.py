@@ -38,7 +38,7 @@ class ModBot(discord.Client):
         # AI: Initialize Gemini detector
         try:
             self.gemini_detector = GeminiDoxxingDetector(
-                project_id=tokens['google_project_id'],
+                project_id=tokens['project_id'],
                 location=tokens.get('google_location', 'us-central1')
             )
             print("🤖 Gemini AI doxxing detector loaded successfully!")
@@ -49,6 +49,8 @@ class ModBot(discord.Client):
 
 
     async def on_ready(self):
+        print(f"DEBUG: Bot name is '{self.user.name}'")
+
         print(f'{self.user.name} has connected to Discord! It is these guilds:')
         for guild in self.guilds:
             print(f' - {guild.name}')
@@ -73,7 +75,9 @@ class ModBot(discord.Client):
         This function is called whenever a message is sent in a channel that the bot can see (including DMs). 
         Currently the bot is configured to only handle messages that are sent over DMs or in your group's "group-#" channel. 
         '''
-        # Ignore messages from the bot 
+        print(f"📝 Received message from {message.author}: {message.content}")
+
+        # Ignore messages from the bot
         if message.author.id == self.user.id:
             return
 

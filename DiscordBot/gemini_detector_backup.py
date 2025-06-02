@@ -53,8 +53,6 @@ CONTEXTUAL ANALYSIS PRIORITIES:
 3. SPECIFICITY: How precise is the identifying information?
 4. VULNERABILITY: Is the target in a vulnerable position?
 5. ESCALATION: Does this fit a pattern of increasing harassment?
-6. TONE: Does the message use obvious sarcasm, absurdity, or exaggeration that undermines doxxing risk? Be cautious not to flag jokes unless they contain real identifiers.
-
 
 ADVANCED PATTERN RECOGNITION:
 • Look for coded language or euphemisms for doxxing
@@ -62,8 +60,6 @@ ADVANCED PATTERN RECOGNITION:
 • Identify coordinated harassment indicators
 • Recognize victim-blaming or justification narratives
 • Spot "just asking questions" that seek personal info
-• Be alert to messy or informal language (abbreviations, emojis, slang, voice-to-text errors)
-
 
 CONFIDENCE CALIBRATION:
 • 0.95-1.0: Crystal clear doxxing or obviously innocent content
