@@ -398,17 +398,17 @@ class Report:
 
         self.full_report = embed
 
-        # try:
-        #     await mod_channel.send(embed=embed)
-        #     if self.client.reviewing_queue.empty():
-        #         await mod_channel.send(f"There is currently {self.client.reviewing_queue.qsize() + 1} report to review.")
-        #     else:
-        #         await mod_channel.send(f"There are currently {self.client.reviewing_queue.qsize() + 1} reports to review.")
-        #     print(f"Report Log: Successfully sent report embed to mod channel '{mod_channel.name}' in guild '{mod_channel.guild.name}'.")
-        # except discord.Forbidden:
-        #     print(f"Report Log Error: Failed to send report to '{mod_channel.name}' (Forbidden - check bot permissions).")
-        # except discord.HTTPException as e:
-        #     print(f"Report Log Error: Failed to send report to '{mod_channel.name}' (HTTP Error: {e.status} - {e.text}).")
+        try:
+            await mod_channel.send(embed=embed)
+            if self.client.reviewing_queue.empty():
+                await mod_channel.send(f"There is currently {self.client.reviewing_queue.qsize() + 1} report to review.")
+            else:
+                await mod_channel.send(f"There are currently {self.client.reviewing_queue.qsize() + 1} reports to review.")
+            print(f"Report Log: Successfully sent report embed to mod channel '{mod_channel.name}' in guild '{mod_channel.guild.name}'.")
+        except discord.Forbidden:
+            print(f"Report Log Error: Failed to send report to '{mod_channel.name}' (Forbidden - check bot permissions).")
+        except discord.HTTPException as e:
+            print(f"Report Log Error: Failed to send report to '{mod_channel.name}' (HTTP Error: {e.status} - {e.text}).")
     
     def _get_severity_color(self):
         """Return a color based on the self.severity level (which is an int)."""

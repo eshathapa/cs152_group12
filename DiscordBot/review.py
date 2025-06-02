@@ -207,13 +207,13 @@ class Review:
         elif self.state == State.AWAITING_CONTENT_CHECK:
             if message.content == "1":
                 self.state = State.AWAITING_FAITH_INDICATOR
-                response = "Was this post:\n"
-                response += " - Shared by the potentially targeted individual AND exhibits **clear** good faith\n"
-                response += " - Shared by someone who knows the potentially targeted individual AND exhibits **clear** good faith\n"
-                response += " - Shared to publicize a business or organization\n"
-                response += "1. Yes, meets at least one of the above criteria.\n"
-                response += "2. No, the post does not meet any of the above criteria.\n"
-                response += "If you are unsure, click on the message link to view the message in context before returning to this review."
+                response = ("""Was this post:
+- Shared by the potentially targeted individual AND exhibits **clear** good faith
+- Shared by someone who knows the potentially targeted individual AND exhibits **clear** good faith
+- Shared to publicize a business or organization
+If you are unsure, click on the message link to view the message in context before returning to this review.
+1. Yes, meets at least one of the above criteria.
+2. No, the post does not meet any of the above criteria.""")
                 return [response]
             elif message.content == "2":
                 self.other_pii_identified = False
