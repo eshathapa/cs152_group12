@@ -4,12 +4,14 @@ import discord
 import re
 import asyncio
 from datetime import datetime
+from count import increment_harassment_count
+from supabase_helper import victim_score 
 
 class ReportType(Enum):
     FRAUD = "Fraud"
     INAPPROPRIATE_CONTENT = "Inappropriate Content"
     HARASSMENT = "Harassment"
-    PRIVACY = "Privacy"
+    PRIVACY = "Privacy Violation"
 
 class InfoType(Enum):
     CONTACT = "Contact Information"
@@ -35,7 +37,7 @@ class State(Enum):
     AWAITING_PRIVACY_DETAILS = auto()
     AWAITING_THREAT = auto()
     AWAITING_INFO_TYPE = auto()
-    AWAITING_SIGNATURE = auto()
+    AWAITING_VICTIM_NAME = auto()
     AWAITING_CONFIRMATION = auto()
     REPORT_COMPLETE = auto()
 
@@ -53,10 +55,13 @@ class Report:
         self.info_types = []
         self.threat = False
         self.reporter_email = None
-        self.signature = None
         self.severity = 0
         self.reporter_id = None
         self.timestamp = None
+        self.victim_name = None
+        self.doxxing_score = 0
+        self.full_report = None
+        self.cancelled = False
         
     async def handle_message(self, message):
         '''
@@ -66,6 +71,7 @@ class Report:
         
         if message.content.lower() == self.CANCEL_KEYWORD:
             self.state = State.REPORT_COMPLETE
+            self.cancelled = True
             return ["Report cancelled."]
         
         if message.content.lower() == self.HELP_KEYWORD:
@@ -104,11 +110,11 @@ class Report:
             self.state = State.AWAITING_REPORT_TYPE
             reply = f"I found this message from {self.message.author.name}:\n"
             reply += f"```{self.message.content}```\n"
-            reply += "What type of report would you like to file? Please select one of the following by typing the number:\n\n"
+            reply += "What type of report would you like to file? Please select one of the following by typing the number:\n"
             reply += "1. Fraud\n"
             reply += "2. Inappropriate Content\n"
             reply += "3. Harrasment\n"
-            reply += "4. Privacy\n"
+            reply += "4. Privacy Violation\n"
             return [reply]
         
         # State: AWAITING_REPORT_TYPE - User chooses a main report category
@@ -121,25 +127,25 @@ class Report:
                     if self.report_type == ReportType.FRAUD:
                         self.state = State.AWAITING_FRAUD_DETAILS
                         response = f"You selected: {self.report_type.value}\n\n"
-                        response += "Please select your reason for reporting Fraud:\n\n"
+                        response += "Please select your reason for reporting Fraud:\n"
                         response += "1. Scam\n2. Misleading Content\n3. Phishing\n"
                         return [response]
                     elif self.report_type == ReportType.INAPPROPRIATE_CONTENT:
                         self.state = State.AWAITING_INAPPROPRIATE_CONTENT_DETAILS
                         response = f"You selected: {self.report_type.value}\n\n"
-                        response += "Please select your reason for reporting Inappropriate Content:\n\n"
+                        response += "Please select your reason for reporting Inappropriate Content:\n"
                         response += "1. Suicidal Intention/Self-Harm\n2. Graphic Violence\n3. Terrorism\n"
                         return [response]
                     elif self.report_type == ReportType.HARASSMENT:
                         self.state = State.AWAITING_HARASSMENT_DETAILS
                         response = f"You selected: {self.report_type.value}\n\n"
-                        response += "Please select your reason for reporting Harassment:\n\n"
+                        response += "Please select your reason for reporting Harassment:\n"
                         response += "1. Credible Threat of Violence\n2. Bullying\n3. Hate Speech\n"
                         return [response]
                     elif self.report_type == ReportType.PRIVACY:
                         self.state = State.AWAITING_PRIVACY_DETAILS
                         response = f"You selected: {self.report_type.value}\n\n"
-                        response += "Please select your reason for reporting Privacy:\n\n"
+                        response += "Please select your reason for reporting Privacy Violation:\n"
                         response += "1. Hacking\n2. Identity Impersonation\n3. Doxxing\n"
                         return [response]
                 else:
@@ -159,9 +165,9 @@ class Report:
                 }
                 if selection in fraud_reasons_map:
                     self.report_sub_type, self.severity = fraud_reasons_map[selection]
-                    self.state = State.AWAITING_SIGNATURE
+                    self.state = State.AWAITING_VICTIM_NAME
                     response = f"You selected Fraud Reason: {self.report_sub_type}.\n\n"
-                    response += "Please provide your signature to confirm the authenticity of this report.\n"
+                    response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
                     return [response]
                 else:
                     return [f"Please enter a valid number between 1 and {len(fraud_reasons_map)} for the fraud reason."]
@@ -179,9 +185,9 @@ class Report:
                 }
                 if selection in ic_reasons_map:
                     self.report_sub_type, self.severity = ic_reasons_map[selection]
-                    self.state = State.AWAITING_SIGNATURE
+                    self.state = State.AWAITING_VICTIM_NAME
                     response = f"You selected Inappropriate Content Reason: {self.report_sub_type}.\n\n"
-                    response += "Please provide your signature to confirm the authenticity of this report.\n"
+                    response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
                     return [response]
                 else:
                     return [f"Please enter a valid number between 1 and {len(ic_reasons_map)} for the inappropriate content reason."]
@@ -203,9 +209,9 @@ class Report:
                         self.threat = True
                         print("Report Log: Credible Threat of Violence identified, self.threat=True, severity=URGENT.")
                     
-                    self.state = State.AWAITING_SIGNATURE
+                    self.state = State.AWAITING_VICTIM_NAME
                     response = f"You selected Harassment Reason: {self.report_sub_type}.\n\n"
-                    response += "Please provide your signature to confirm the authenticity of this report.\n"
+                    response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
                     return [response]
                 else:
                     return [f"Please enter a valid number between 1 and {len(harassment_reasons_map)} for the harassment reason."]
@@ -230,9 +236,9 @@ class Report:
                         response += "1. Yes\n2. No"
                         return [response]
                     else: 
-                        self.state = State.AWAITING_SIGNATURE
+                        self.state = State.AWAITING_VICTIM_NAME
                         response = f"You selected Privacy Reason: {self.report_sub_type}.\n\n"
-                        response += "Please provide your signature to confirm the authenticity of this report.\n"
+                        response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
                         return [response]
                 else:
                     return [f"Please enter a valid number between 1 and {len(privacy_reasons_map)} for the privacy reason."]
@@ -247,7 +253,7 @@ class Report:
 
             self.state = State.AWAITING_INFO_TYPE
             response = f"You selected Privacy Reason: Doxxing.\n\n"
-            response += "What type(s) of confidential information was shared? Please select one or more of the following by typing the number(s), separated by commas (e.g., 1,3,5):\n\n"
+            response += "What type(s) of confidential information was shared? Please select one or more of the following by typing the number(s), separated by commas (e.g., 1,3,5):\n"
             response += "1. Contact Information\n"
             response += "2. Location Information\n"
             response += "3. Financial Information\n"
@@ -277,18 +283,23 @@ class Report:
                     return ["You must select at least one type of information. Please try again, or type `cancel`."]
 
                 self.info_types = valid_info_objects
+                self.state = State.AWAITING_VICTIM_NAME
 
-                self.state = State.AWAITING_SIGNATURE
-                selected_types_str = ", ".join([it.value for it in self.info_types])
-                response = f"You specified the following information types for Doxxing: {selected_types_str}.\n\n"
-                response += "Please provide your signature to confirm the authenticity of this report.\n"
+                # state will move to victim name collection next
+                response = f"You specified the following information types for Doxxing: {', '.join([it.value for it in self.info_types])}.\n\n"
+                response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
                 return [response]
             except ValueError:
                 return ["Invalid input. Please enter numbers separated by commas (e.g., 1,2,3). Example: 1,3"]
         
-        # State: AWAITING_SIGNATURE - User provides their signature
-        elif self.state == State.AWAITING_SIGNATURE:
-            self.signature = message.content
+        # State: AWAITING_VICTIM_NAME - Optional victim name
+        elif self.state == State.AWAITING_VICTIM_NAME:
+            if message.content.lower() == "skip":
+                self.victim_name = None
+            else:
+                self.victim_name = message.content.strip()
+                self.doxxing_score = victim_score(self.victim_name)
+
             self.state = State.AWAITING_CONFIRMATION
             
             summary = "**Report Summary:**\n\n"
@@ -296,6 +307,10 @@ class Report:
             if self.report_sub_type:
                 summary += f"**Specific Reason:** {self.report_sub_type}\n"
             
+            # If a victim name was provided
+            if self.victim_name:
+                summary += f"**Victim Name (if provided):** {self.victim_name}\n"
+
             # If Doxxing info types were collected, list them
             if self.info_types: 
                 info_types_str = ", ".join([it.value for it in self.info_types])
@@ -306,8 +321,7 @@ class Report:
             
             summary += f"\n**Reported Message Author:** {self.message.author.name}\n"
             summary += f"**Reported Message Content:** ```{self.message.content}```\n"
-            summary += f"\n**Your Signature:** {self.signature}\n\n"
-            summary += "Is this information correct? Type `yes` to submit the report or `no` to cancel."
+            summary += "Is this information correct? Type `yes` to submit the report or `no` to cancel. Please note that if you type `yes`, your account will be associated with this report."
             return [summary]
         
         # State: AWAITING_CONFIRMATION - User confirms the report details
@@ -354,11 +368,15 @@ class Report:
         
         embed.add_field(name="**Content of Reported Message**", value=f"```{self.message.content[:1000]}```" + ("... (truncated)" if len(self.message.content) > 1000 else ""), inline=False)
         embed.add_field(name="**Author of Reported Message**", value=f"{self.message.author.mention} (`{self.message.author.name}`, ID: `{self.message.author.id}`)", inline=True)
-        embed.add_field(name="**Filed By (Reporter)**", value=f"<@{self.reporter_id}> (Signature: `{self.signature}`)", inline=True)
+        embed.add_field(name="**Filed By (Reporter)**", value=f"<@{self.reporter_id}>", inline=True)
 
         if self.report_sub_type:
             embed.add_field(name="**Specific Reason Provided by Reporter**", value=self.report_sub_type, inline=False)
         
+        # Victim name if provided
+        if self.victim_name:
+            embed.add_field(name="**Victim (if provided)**", value=self.victim_name, inline=False)
+
         # If Doxxing info types were collected, add them to the embed
         if self.info_types:
             info_types_display_str = "\n".join([f"- {it.value}" for it in self.info_types])
@@ -373,8 +391,19 @@ class Report:
         
         embed.set_footer(text=f"Report ID (Timestamp): {self.timestamp.strftime('%Y-%m-%d %H:%M:%S UTC')}")
 
+        # Increment harassment count if this report is of type HARASSMENT
+        if self.report_type == ReportType.HARASSMENT:
+            offender_id = self.message.author.id
+            increment_harassment_count(guild_id, offender_id)
+
+        self.full_report = embed
+
         try:
             await mod_channel.send(embed=embed)
+            if self.client.reviewing_queue.empty():
+                await mod_channel.send(f"There is currently {self.client.reviewing_queue.qsize() + 1} report to review.")
+            else:
+                await mod_channel.send(f"There are currently {self.client.reviewing_queue.qsize() + 1} reports to review.")
             print(f"Report Log: Successfully sent report embed to mod channel '{mod_channel.name}' in guild '{mod_channel.guild.name}'.")
         except discord.Forbidden:
             print(f"Report Log Error: Failed to send report to '{mod_channel.name}' (Forbidden - check bot permissions).")
@@ -448,9 +477,8 @@ class Report:
             help_msg += "5. Explicit Content\n"
             help_msg += "\nType `cancel` to cancel the report."
 
-        elif self.state == State.AWAITING_SIGNATURE:
-            help_msg += "Please provide your signature to confirm the authenticity of this report.\n"
-            help_msg += "This can be your full name or your Discord username."
+        elif self.state == State.AWAITING_VICTIM_NAME:
+            help_msg += "Please provide the name of the victim if known, or type `skip` if not provided."
         
         elif self.state == State.AWAITING_CONFIRMATION:
             help_msg += "Please review the report summary I provided.\n"
@@ -463,3 +491,8 @@ class Report:
     
     def report_complete(self):
         return self.state == State.REPORT_COMPLETE
+
+    def get_report_score(self):
+        if self.doxxing_score == 0 or self.severity == 0:
+            return self.doxxing_score + self.severity
+        return self.doxxing_score * self.severity

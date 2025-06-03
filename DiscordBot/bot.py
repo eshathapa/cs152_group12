@@ -9,6 +9,9 @@ from report import Report
 from review import Review
 from gemini_detector import GeminiDoxxingDetector
 import pdb
+import count as count_tool
+from queue import PriorityQueue
+from itertools import count
 
 # Set up logging to the console
 logger = logging.getLogger('discord')
@@ -24,7 +27,6 @@ with open(token_path) as f:
     tokens = json.load(f)
     discord_token = tokens['discord']
 
-
 class ModBot(discord.Client):
     def __init__(self): 
         intents = discord.Intents.default()
@@ -34,6 +36,8 @@ class ModBot(discord.Client):
         self.mod_channels = {} # Map from guild to the mod channel id for that guild
         self.reports = {} # Map from user IDs to the state of their report
         self.reviews = {}
+        self.reviewing_queue = PriorityQueue()
+        self.unique = count()
         
         # AI: Initialize Gemini detector
         try:
@@ -46,6 +50,7 @@ class ModBot(discord.Client):
             print(f"❌ Failed to initialize Gemini detector: {e}")
             print("📝 Bot will continue without AI analysis")
             self.gemini_detector = None
+
 
 
     async def on_ready(self):
@@ -96,31 +101,31 @@ class ModBot(discord.Client):
             return
 
         # if message.content.startswith(Review.START_KEYWORD):
-        if message.content == Review.HELP_KEYWORD:
+        if message.content == Review.HELP_KEYWORD and message.author.id not in self.reviews:
             reply =  "Type in the moderator password to begin the reviewing process.\n"
             await message.channel.send(reply)
 
         author_id = message.author.id
         responses = []
 
-        # If the report is complete or cancelled, remove it from our map
+        # If the user's previous report is complete or cancelled, remove it from our map
         if author_id in self.reports and self.reports[author_id].report_complete():
             self.reports.pop(author_id)
 
         if author_id in self.reviews and self.reviews[author_id].review_complete():
             self.reviews.pop(author_id)
 
-        if message.content.startswith(Review.PASSWORD):
+        if author_id not in self.reviews and message.content.startswith(Review.PASSWORD):
             self.reviews[author_id] = Review(self)
 
         if author_id in self.reviews:
-            # Let the report class handle this message; forward all the messages it returns to uss
+            # Let the report class handle this message; forward all the messages it returns to us
             responses = await self.reviews[author_id].handle_message(message)
             for r in responses:
                 await message.channel.send(r)
             return
 
-        # Only respond to messages if they're part of a reporting flow
+        # Respond to messages if they're part of a reporting flow
         if author_id not in self.reports and not message.content.startswith(Report.START_KEYWORD):
             return
 
@@ -132,7 +137,13 @@ class ModBot(discord.Client):
         responses = await self.reports[author_id].handle_message(message)
         for r in responses:
             await message.channel.send(r)
-    
+
+        # Add finalized report to queue to remove
+        if author_id in self.reports and self.reports[author_id].report_complete():
+            finalized_report = self.reports[author_id]
+            if not finalized_report.cancelled:
+                self.reviewing_queue.put((1 / finalized_report.get_report_score(), next(self.unique), finalized_report.full_report))
+            self.reports.pop(author_id)
 
     async def handle_channel_message(self, message):
         # Only handle messages sent in the "group-#" channel or "group-#-mod" channel
@@ -140,6 +151,21 @@ class ModBot(discord.Client):
             if message.content == Review.HELP_KEYWORD:
                 reply =  "Use the `review` command to begin the reviewing process.\n"
                 await message.channel.send(reply)
+                return
+
+            # /count command under -mod channel
+            if message.content.strip() == "/count":
+                counts = count_tool.get_counts(message.guild.id)
+                if not counts:
+                    await message.channel.send("No harassment reports have been logged yet.")
+                else:
+                    # Build a readable report of counts
+                    lines = ["**Harassment Report Counts:**"]
+                    for user_id, num in counts.items():
+                        member = message.guild.get_member(user_id)
+                        name_display = member.display_name if member else f"User ID {user_id}"
+                        lines.append(f"- {name_display} (`{user_id}`): {num}")
+                    await message.channel.send("\n".join(lines))
                 return
 
             # Only respond to messages if they're part of a reviewing flow

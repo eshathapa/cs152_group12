@@ -4,6 +4,9 @@ import discord
 import re
 import asyncio
 from datetime import datetime, timedelta
+from supabase_helper import insert_victim_log
+from dataclasses import dataclass, field
+from typing import Any
 
 class ReportType(Enum):
     FRAUD = "Fraud"
@@ -35,26 +38,38 @@ class State(Enum):
     CONFIRMING_REVIEW = auto()
     REVIEW_COMPLETE = auto()
     AWAITING_FAITH_INDICATOR = auto()
+    AWAITING_NAME = auto()
+    NAME_CONFIRMATION = auto()
+    AWAITING_CONTINUE = auto()
+    
 
 class Review:
-    PASSWORD = "AG8Q2XJa39"
+    PASSWORD = "alison"
     CANCEL_KEYWORD = "cancel"
     HELP_KEYWORD = "review help"
     
     def __init__(self, client):
         self.state = State.REVIEW_START
         self.client = client
+
+        # Shared queue
+        self.reports = client.reviewing_queue
+
+        # Variables specific to report info
         self.report = None
-        self.report_details = None
+        self.priority = None
+        self.id = None
         self.info_types = []
         self.details = None
         self.reporter_id = None
         self.timestamp = None
+        self.victim_name = None
+        self.guild_id = None
         
         # Assessment flags set by the reviewer for building a summary
         self.threat_identified_by_reviewer = False
         self.disallowed_info_identified = False 
-        self.other_problematic_content_identified = False 
+        self.other_pii_identified = False 
 
         # Flag to indicate if the original reported message should be deleted, suspended, permanently banned, and to escalate to a secondary reviewer
         self.remove = False
@@ -71,10 +86,11 @@ class Review:
         This function handles the reporting flow by managing state transitions
         and prompts at each state.
         '''
-        
         if message.content.lower() == self.CANCEL_KEYWORD:
             self.state = State.REVIEW_COMPLETE
-            return ["Review cancelled."]
+            if self.report:
+                self.reports.put((self.priority, self.id, self.report))
+            return ["Review cancelled. Type the password to begin again."]
         
         if message.content.lower() == self.HELP_KEYWORD:
             return [self.get_help_message()]
@@ -83,99 +99,59 @@ class Review:
             self.timestamp = datetime.now()
             reply = "Thank you for starting the reviewing process. "
             reply += "Say `review help` at any time for more information.\n\n"
-            reply += "Please copy paste the link to the report you want to review.\n"
-            reply += "You can obtain this link by right-clicking the report and clicking `Copy Message Link`."
-            self.state = State.AWAITING_MESSAGE
-            return [reply]
-            
-        if self.state == State.AWAITING_MESSAGE:
-            # Parse IDs from linked report message
-            m = re.search(r'/(\d+)/(\d+)/(\d+)', message.content)
-            if not m:
-                return ["Invalid message link. Please use a valid Discord message link or type `cancel`."]
-            
-            guild_id, channel_id, message_id = map(int, m.groups())
-            guild = self.client.get_guild(guild_id)
-            if not guild:
-                return ["Error: Bot cannot find the server for that link."]
-            channel = guild.get_channel(channel_id)
-            if not channel or not isinstance(channel, discord.TextChannel):
-                return ["Error: Mod channel not found or not a text channel."]
-            
-            try:
-                # Fetch the report embed itself
-                self.report = await channel.fetch_message(message_id)
-                if not self.report.embeds or not self.report.author.id == self.client.user.id:
-                    return ["Linked message isn't a valid report embed from me. Please link the correct report."]
-                self.report_details = self.report.embeds[0]
-
-                original_message_link_str, original_author_id_str = None, None
-                # Extract original message data from report fields
-                for field in self.report_details.fields:
-                    if field.name == "**Direct Link to Reported Message**": 
-                        match = re.search(r'\((.*?)\)', field.value) 
-                        if match: original_message_link_str = match.group(1)
-                    elif field.name == "**Author of Reported Message**": 
-                        match = re.search(r'ID: `(\d+)`', field.value)
-                        if match: original_author_id_str = match.group(1)
-                    if field.name == "**Specific Reason Provided by Reporter**":
-                        self.abuse_type = field.value
-                
-                if not original_message_link_str and self.report_details.description:
-                    match = re.search(r'https?://discord\.com/channels/(\d+)/(\d+)/(\d+)', self.report_details.description)
-                    if match: original_message_link_str = match.group(0)
-                        
-                if not original_message_link_str or not original_author_id_str:
-                    return ["Error: Missing original message details in report embed. Format issue?"]
-
-                link_parts = original_message_link_str.strip("<>").split('/')
-                if len(link_parts) < 3:
-                    return [f"Error: Invalid original message link format in report: {original_message_link_str}"]
-                
-                try:
-                    orig_guild_id, orig_channel_id, orig_message_id = map(int, link_parts[-3:])
-                    orig_author_id = int(original_author_id_str)
-                except ValueError:
-                    return ["Error parsing IDs from report embed. Corrupted data?"]
-
-                orig_guild = self.client.get_guild(orig_guild_id)
-                if not orig_guild: return [f"Error: Original guild (ID: {orig_guild_id}) not found."]
-                
-                orig_channel = orig_guild.get_channel(orig_channel_id)
-                if not orig_channel or not isinstance(orig_channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel, discord.ForumChannel)):
-                     return [f"Error: Original channel (ID: {orig_channel_id}) not found/fetchable."]
-                
-                message_fetchable_channel : discord.abc.Messageable = orig_channel
-                try:
-                    # Fetch the actual user message that was reported
-                    self.original_reported_message = await message_fetchable_channel.fetch_message(orig_message_id)
-                except discord.NotFound: return ["Error: Original reported message not found (deleted?)."]
-                except discord.Forbidden: return ["Error: Bot permission issue fetching original message (Need 'Read History')."]
-
-                try:
-                    self.original_message_author = await orig_guild.fetch_member(orig_author_id)
-                except discord.NotFound:
-                    try:
-                        self.original_message_author = await self.client.fetch_user(orig_author_id)
-                    except discord.NotFound: return ["Error: Original author not found (neither member nor user)."]
-                except discord.Forbidden: return ["Error: Bot permission issue fetching author (Need 'Members Intent'?)."]
-
-            except (discord.errors.NotFound, IndexError) as e:
-                return ["Error: Could not process linked report. Deleted or invalid format?"]
-
-            self.state = State.AWAITING_THREAT_JUDGEMENT
-            
-            reply = f"I found this report:\n"
-            for field in self.report_details.fields:
-                reply += f"{field.name}: {field.value}\n"
-            reply += "Does this message contain a threat of violence? Selecting yes will result in the post being removed.\n"
-            reply += "1. Yes\n"
-            reply += "2. No"
-                
+            reply += "Type `continue` if you would like to review a report. Type `cancel` to exit the review flow."
+            self.state = State.AWAITING_CONTINUE
             return [reply]
         
+        if self.state == State.AWAITING_CONTINUE:
+            if message.content.lower().strip() == "continue":
+                await message.author.send("Searching for reports...")
+                while not self.reports.empty():
+                    try:
+                        valid_message = False
+                        full_entry = self.reports.get(block=True, timeout=5)
+                        self.report = full_entry[2]
+                        self.priority = full_entry[0]
+                        self.id = full_entry[1]
+                        for field in self.report.fields:
+                            if field.name == "**Direct Link to Reported Message**": 
+                                match = re.search(r'\((.*?)\)', field.value)
+                                m = re.search(r'/(\d+)/(\d+)/(\d+)', match.group(1))
+                                if m:
+                                    self.guild_id, channel_id, message_id = map(int, m.groups())
+                                    try:
+                                        await self.client.get_guild(self.guild_id).get_channel(channel_id).fetch_message(message_id)
+                                        valid_message = True
+                                    except discord.errors.NotFound:
+                                        mod_channel = self.client.mod_channels.get(self.guild_id)
+                                        if mod_channel:
+                                            await mod_channel.send("A report was removed from the queue due to the post being deleted.")
+                            elif field.name == "**Author of Reported Message**": 
+                                match = re.search(r'ID: `(\d+)`', field.value)
+                                if match: original_author_id_str = match.group(1)
+                            if field.name == "**Specific Reason Provided by Reporter**":
+                                self.abuse_type = field.value
+                            if field.name == "**Victim (if provided)**":
+                                self.victim_name = field.value
+                        if not valid_message:
+                            continue
+                        await message.author.send(embed=self.report)
+                        self.state = State.AWAITING_THREAT_JUDGEMENT
+                        reply = "Here is the report to review. Please answer the following reporting flow questions.\n\n"
+                        reply += "Does the post in question contain a threat?\n"
+                        reply += "1. Yes, this post contains a threat.\n"
+                        reply += "2. No, this post does not contain a threat."
+                        return [reply]
+                    except Exception as e:
+                        self.state = State.REVIEW_COMPLETE
+                        return ["All reports have been reviewed or are currently under review"]
+                self.state = State.REVIEW_COMPLETE
+                return ["All reports have been reviewed or are currently under review"]
+            else:
+                return ["Please type `continue` to proceed to review or `cancel` to cancel."]
+        
         elif self.state == State.AWAITING_THREAT_JUDGEMENT:
-            if message.content == "1": 
+            if message.content == "1":
                 self.threat_identified_by_reviewer = True
                 self.remove = True
                 self.suspend_user = True
@@ -186,16 +162,13 @@ class Review:
             
             if self.abuse_type == "Doxxing":
                 self.state = State.AWAITING_DISALLOWED_INFO
-                reply = ("Does the post contain **disallowed information** (Gov ID, Financial Details)?\n1. Yes\n2. No")
+                reply = ("Our platform **never** allows government identification information (e.g. social security numbers) or financial information (e.g. bank account numbers, credit card numbers) to be posted.\n\n Does the post contain any of the **expressly disallowed information** listed above?\n1. Yes, it does.\n2. No, it does not.")
                 return [reply]
             else:
                 self.state = State.AWAITING_OTHER_ABUSE_JUDGEMENT
-                reply = f"I found this report:\n"
-                for field in self.report_details.fields:
-                    reply += f"{field.name}: {field.value}\n"
-                reply += f"This message was flagged for {self.abuse_type}. Should this message be removed on the basis of that content?\n"
-                reply += "1. Yes\n"
-                reply += "2. No"
+                reply = f"This message was flagged for {self.abuse_type}. Should this message be removed on the basis of that content?\n"
+                reply += f"1. Yes, this post contains {self.abuse_type}.\n"
+                reply += f"2. No, this post does not contain {self.abuse_type}."
                 return [reply]
             
         elif self.state == State.AWAITING_OTHER_ABUSE_JUDGEMENT:
@@ -209,7 +182,7 @@ class Review:
             else: 
                 reply = ("Review assessment (no direct threat ID'd by you):\n")
                 if self.remove:
-                    reply += f"- {self.report_details['**Specific Reason Provided by Reporter**']} content was identified.\n"
+                    reply += f"- {self.report['**Specific Reason Provided by Reporter**']} content was identified.\n"
                     reply += "- This will be logged. The post will be removed.\n"
                 else: 
                     reply += "- No direct threat or other significant problematic content was flagged by you.\n"
@@ -221,26 +194,29 @@ class Review:
         elif self.state == State.AWAITING_DISALLOWED_INFO:
             if message.content == "1":
                 self.disallowed_info_identified = True
+                self.remove = True
+                self.suspend_user = True
             elif message.content == "2":
                 self.disallowed_info_identified = False
             else:
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
             self.state = State.AWAITING_CONTENT_CHECK
-            reply = ("Does it contain **other problematic content** (phone, email, location, employer)?\n1. Yes\n2. No")
+            reply = ("Does it contain **other personally identifiable information** (phone, email, location, employer)?\n1. Yes\n2. No")
             return [reply]
         
         elif self.state == State.AWAITING_CONTENT_CHECK:
             if message.content == "1":
                 self.state = State.AWAITING_FAITH_INDICATOR
-                response = "Was this post:\n"
-                response += "- Shared by either the potentially targeted individual and/or someone who knows them AND exhibits clear good faith\n"
-                response += "- Shared to publicize a business or organization\n"
-                response += "(Note: if you cannot tell intention and the information belongs to an INDIVIDUAL (as opposed to a business), select “no” here. If you are unsure, click on the message link to view the message in context.)\n"
-                response += "1. Yes\n"
-                response += "2. No"
+                response = ("""Was this post:
+- Shared by the potentially targeted individual AND exhibits **clear** good faith
+- Shared by someone who knows the potentially targeted individual AND exhibits **clear** good faith
+- Shared to publicize a business or organization
+If you are unsure, click on the message link to view the message in context before returning to this review.
+1. Yes, meets at least one of the above criteria.
+2. No, the post does not meet any of the above criteria.""")
                 return [response]
             elif message.content == "2":
-                self.other_problematic_content_identified = False
+                self.other_pii_identified = False
             else:
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
             
@@ -250,45 +226,103 @@ class Review:
                  reply = ("Threat identified. Policy: Message removal & 1-day user suspension.\n\n" 
                           "Confirm review and actions?\n1. Yes (Proceed)\n2. No (Cancel Review)")
             else: 
-                 reply = ("Review assessment (no direct threat ID'd by you):\n")
-                 if self.disallowed_info_identified or self.other_problematic_content_identified:
-                     reply += "- Problematic content (Disallowed Info or Other) was identified.\n"
-                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
-                 else: 
-                     reply += "- No direct threat or other significant problematic content was flagged by you.\n"
-                 reply += "No suspension will occur (policy requires reviewer to ID direct threat).\n\n"
-                 reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
+                reply = ("Review assessment (no direct threat ID'd by you):\n")
+                if self.disallowed_info_identified:
+                    reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
+                    reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
+                if self.remove:
+                    reply += "- Personally identifiable information was identified. This post will be removed.\n"
+                    reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
+                else: 
+                    reply += "- No direct threat or other significant problematic content was flagged by you.\n"
+                reply += "No suspension will occur (policy requires reviewer to ID direct threat).\n\n"
+                reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
             return [reply]
 
         elif self.state == State.AWAITING_FAITH_INDICATOR:
             if message.content == "2":
-                self.other_problematic_content_identified = True
+                self.other_pii_identified = True
+                self.remove = True
+
+                # Insert victim log into Doxxing Supabase (if victim name provided)
+                if self.victim_name:
+                    self.state = State.NAME_CONFIRMATION
+                    reply = f"The victim name reported is `{self.victim_name}`. Please confirm that this is the correct name.\n"
+                    reply += "1. This name is **correct**.\n"
+                    reply += "2. This name is **incorrect**."
+                    return[reply]
+                else:
+                    self.state = State.AWAITING_NAME
+                    reply = "There is no victim name attached to this report. Please type the full name of the person being doxxed so the incident is accurately stored in our database."
+                    return [reply]
+    
             elif message.content != "1":
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
+            self.state = State.CONFIRMING_REVIEW
+            if self.threat_identified_by_reviewer:
+                self.state = State.CONFIRMING_REVIEW
+                reply = ("Threat identified. Policy: Message removal & 1-day user suspension.\n\n" 
+                          "Confirm review and actions?\n1. Yes (Proceed)\n2. No (Cancel Review)")
+            else: 
+                reply = ("Review assessment (no direct threat ID'd by you):\n")
+                if self.disallowed_info_identified:
+                    reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
+                    reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
+                if self.remove:
+                    reply += "- Personally identifiable information was identified. This post will be removed.\n"
+                    reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
+                else: 
+                    reply += "- No direct threat or other significant problematic content was flagged by you.\n"
+                reply += "No suspension will occur (policy requires reviewer to ID direct threat).\n\n"
+                reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
+            return [reply]
+        
+        elif self.state == State.NAME_CONFIRMATION:
+            if message.content == "2":
+                self.state = State.AWAITING_NAME
+                reply = "Please type the name of the person being doxxed below:"
+                return[reply]
+            elif message.content != "1":
+                reply = f"Please type `1` if {self.victim_name} is the correct name and `2` if incorrect."
+                return [reply]
             self.state = State.CONFIRMING_REVIEW
             if self.threat_identified_by_reviewer:
                  self.state = State.CONFIRMING_REVIEW
                  reply = ("Threat identified. Policy: Message removal & 1-day user suspension.\n\n" 
                           "Confirm review and actions?\n1. Yes (Proceed)\n2. No (Cancel Review)")
             else: 
-                 reply = ("Review assessment (no direct threat ID'd by you):\n")
-                 if self.disallowed_info_identified or self.other_problematic_content_identified:
-                     reply += "- Problematic content (Disallowed Info or Other) was identified.\n"
-                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
-                 else: 
-                     reply += "- No direct threat or other significant problematic content was flagged by you.\n"
-                 reply += "No suspension will occur (policy requires reviewer to ID direct threat).\n\n"
-                 reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
+                reply = ("Review assessment (no direct threat ID'd by you):\n")
+                if self.disallowed_info_identified:
+                    reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
+                    reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
+                if self.remove:
+                    reply += "- Personally identifiable information was identified. This post will be removed.\n"
+                    reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
+                else: 
+                    reply += "- No direct threat or other significant problematic content was flagged by you.\n"
+                reply += "No suspension will occur (policy requires reviewer to ID direct threat).\n\n"
+                reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
             return [reply]
+            
+
+        elif self.state == State.AWAITING_NAME:
+            self.victim_name = message.content
+            self.state = State.NAME_CONFIRMATION
+            reply = f"The name now on file is `{self.victim_name}`. Is this correct?\n"
+            reply += "1. Yes, this name is correct.\n"
+            reply += "2. No, I need to re-type the name."
+            return[reply]
         
         elif self.state == State.CONFIRMING_REVIEW:
             if message.content == "1":
+                if self.victim_name:
+                    insert_victim_log(self.victim_name, self.timestamp)
                 await self._submit_report_to_mods()
                 self.state = State.REVIEW_COMPLETE
                 return ["Review finalized. Outcome logged to the moderator channel. Type the password to start a new review."]
             elif message.content == "2":
                 self.state = State.REVIEW_COMPLETE
-                return ["Review cancelled as per your request."]
+                return ["Review cancelled. Type the password to begin again."]
             else:
                 return ["Invalid input. Please type 1 to Confirm or 2 to Cancel."]
         
@@ -306,19 +340,8 @@ class Review:
             actions_taken_summary_list.append("Critical Error: Original message/author not identified by bot.")
             return actions_taken_summary_list
 
-        if self.threat_identified_by_reviewer:
-            # Attempt to delete reported message
-            if self.remove:
-                try:
-                    await self.original_reported_message.delete()
-                    actions_taken_summary_list.append("Original message **deleted**.")
-                except discord.Forbidden:
-                    actions_taken_summary_list.append("Bot **failed to delete** message (Permissions error).")
-                except discord.NotFound:
-                    actions_taken_summary_list.append("Original message **not found** (already deleted?).")
-                except discord.HTTPException as e:
-                    actions_taken_summary_list.append(f"Bot **failed to delete** message (HTTP Error: {e.status}).")
-            
+        # Attempt to suspend user if appropriate
+        if self.threat_identified_by_reviewer or self.disallowed_info_identified:
             if self.suspend_user:
                 if isinstance(self.original_message_author, discord.Member):
                     try:
@@ -331,6 +354,19 @@ class Review:
                 else:
                     actions_taken_summary_list.append(f"User `{self.original_message_author.display_name}` **could not be suspended** (not a current server member).")
         
+        # Attempt to delete reported message if appropriate
+        if self.remove:
+            print("trying to remove")
+            try:
+                await self.original_reported_message.delete()
+                actions_taken_summary_list.append("Original message **deleted**.")
+            except discord.Forbidden:
+                actions_taken_summary_list.append("Bot **failed to delete** message (Permissions error).")
+            except discord.NotFound:
+                actions_taken_summary_list.append("Original message **not found** (already deleted?).")
+            except discord.HTTPException as e:
+                actions_taken_summary_list.append(f"Bot **failed to delete** message (HTTP Error: {e.status}).")
+
         if not actions_taken_summary_list: 
              actions_taken_summary_list.append("No automated actions (delete/suspend) triggered (e.g., no direct threat ID'd by reviewer).")
 
@@ -340,13 +376,13 @@ class Review:
         """
         Send the review to the moderator channel for the guild.
         """
-        if not self.report or not self.report_details:
+        if not self.report:
             return
         
         reviewer_name = "Moderator (Reviewer ID N/A)" 
         actions_performed_strings = await self._execute_moderation_actions()
         summary_lines = []
-        summary_lines.append(f"**Review of Report: `{self.report_details.title}`**") 
+        summary_lines.append(f"**Review of Report: `{self.report.title}`**") 
         if self.original_reported_message and self.original_message_author:
             summary_lines.append(f"Original Msg Author: `{self.original_message_author.display_name}` (ID: `{self.original_message_author.id}`)")
             summary_lines.append(f"Original Msg Link: [Click to View]({self.original_reported_message.jump_url})")
@@ -358,7 +394,7 @@ class Review:
         summary_lines.append(f"- Threat of Violence: `{'Yes' if self.threat_identified_by_reviewer else 'No'}`")
         if self.abuse_type == "Doxxing":
             summary_lines.append(f"- Disallowed Info: `{'Yes' if self.disallowed_info_identified else 'No'}`")
-        summary_lines.append(f"- Other Problematic Content: `{'Yes' if self.other_problematic_content_identified else 'No'}`")
+        summary_lines.append(f"- Other Problematic Content: `{'Yes' if self.other_pii_identified else 'No'}`")
 
         summary_lines.append("\n**Outcome:**")
         summary_lines.append("- Status: First-Level Review Completed.")
@@ -369,7 +405,7 @@ class Review:
             summary_lines.append("    - No automated actions logged.") 
         
         if (not self.threat_identified_by_reviewer and 
-            (self.disallowed_info_identified or self.other_problematic_content_identified)):
+            (self.disallowed_info_identified or self.other_pii_identified)):
                  summary_lines.append("\n  Note: Other violations noted. Manual follow-up may be needed.")
 
         final_summary_text = "\n".join(summary_lines)
@@ -378,11 +414,10 @@ class Review:
         embed_color = discord.Color.dark_grey()
         if self.threat_identified_by_reviewer: 
             embed_title, embed_color = "Review: Actions Taken/Logged", discord.Color.green()
-        elif (self.disallowed_info_identified or self.other_problematic_content_identified): 
+        elif (self.disallowed_info_identified or self.other_pii_identified): 
             embed_title, embed_color = "Review: Findings Logged", discord.Color.blue()
 
-        guild_id = self.report.guild.id
-        mod_channel = self.client.mod_channels.get(guild_id)
+        mod_channel = self.client.mod_channels.get(self.guild_id)
         if not mod_channel:
             return
 
@@ -390,55 +425,66 @@ class Review:
         review_embed.set_footer(text=f"Review by: {reviewer_name} | Bot v2.2")
         try:
             await mod_channel.send(embed=review_embed)
+            if self.reports.empty():
+                await mod_channel.send(f"There are no more reports to review. Amazing work, everyone!")
+            elif self.reports.size() == 1:
+                await mod_channel.send(f"There is now {self.reports.qsize()} report left to review.")
+            else:
+                await mod_channel.send(f"There are now {self.reports.qsize()} reports left to review.")
         except discord.Forbidden:
             pass
         except discord.HTTPException as e:
             pass
 
     def get_help_message(self):
-        help_msg = "**Discord Report Bot Help**\n\n"
+        help_msg = "**Discord Review Bot Help**\n\n"
+        help_msg += "You can type `cancel` at any point to stop the current report process.\n\n"
         
         if self.state == State.REVIEW_START:
             help_msg += "To start a review, type in the moderator password.\n"
             help_msg += "To cancel the reviewing process at any time, type `cancel`."
         
         elif self.state == State.AWAITING_MESSAGE:
-            help_msg += "I need the link to the report you want to review.\n"
-            help_msg += "To get this link, right-click on the report and select 'Copy Message Link'.\n"
-            help_msg += "Then paste that link in this chat."
+            help_msg += "I need the link to the report you want to review. To get this link, right-click on the report and select 'Copy Message Link', then paste that link in this chat."
             REVIEW_START = auto()
 
         elif self.state == State.AWAITING_THREAT_JUDGEMENT:
-            help_msg += "Please identify whether the post in question contains a threat of violence. Posts labeled as a threat will be removed.\n\n"
-            help_msg += "1. Yes\n"
-            help_msg += "2. No\n"
+            help_msg += "Please identify whether the post in question contains a threat of violence. Posts labeled as a threat will be removed.\n"
+            help_msg += "1. Yes, a threat is present.\n"
+            help_msg += "2. No, a threat is **not** present."
 
         elif self.state == State.AWAITING_OTHER_ABUSE_JUDGEMENT:
             help_msg += f"The report was labeled as {self.abuse_type}. Does this content contain {self.abuse_type}?\n"
-            help_msg += "1. Yes\n"
-            help_msg += "2. No\n"
+            help_msg += f"1. Yes, the post contains {self.abuse_type}.\n"
+            help_msg += f"2. No, the post does **not** contain {self.abuse_type}."
         
         elif self.state == State.AWAITING_DISALLOWED_INFO:
-            help_msg += "Please identify whether the post in question contains information disallowed on our platform. Disallowed information includes:\n\n"
+            help_msg += "The following information is never allowed on our platform:\n"
             help_msg += " - Government ID (e.g. Social Security Numbers, ID numbers, etc.)\n"
             help_msg += " - Personal financial information (e.g. bank account numbers, credit card numbers, etc.\n"
-            help_msg += "Posts labeled as containing disallowed information will be removed and the users will be suspended. Does this post contain disallowed information?\n"
-            help_msg += "1. Yes\n"
-            help_msg += "2. No\n"
+            help_msg += "It is important to know if this post contains any of that information. Posts labeled as containing disallowed information will be removed and the users will be suspended. Does this post contain disallowed information?\n"
+            help_msg += "1. Yes, this post **contains expressly disallowed information**\n"
+            help_msg += "2. No, it does not.\n"
         
         elif self.state == State.AWAITING_CONTENT_CHECK:
-            help_msg += "Please describe what specific information was shared.\n"
-            help_msg += "Be as detailed as possible to help moderators address the issue effectively."
+            help_msg += "Please type `1` if the post contains other personally identifiable information, such as phone, email, location, employer. Type `2` otherwise."
         
         elif self.state == State.AWAITING_INTENTION:
-            help_msg += "Please provide the name of the person whose information was shared.\n"
-            help_msg += "This helps moderators track and address the issue more effectively.\n"
-            help_msg += "You can type 'anonymous' if you prefer not to disclose this information."
+            help_msg += "Any individual or business may post their own information (except for government and financial information). Otherwise, we have stricter policy guidelines.\n"
+            help_msg += "Private and potentially sensitive information posted about a **business** must **lack bad faith**. Neutral posts are allowed."
+            help_msg += "Private and potentially sensitive information posted about an **individual** must be shared in **good faith**. This is a higher threshold than for businesses - ambiguous posts should be removed.\n"
+            help_msg += "Enter `1` if:\n"
+            help_msg += " - A person is posting their own information.\n"
+            help_msg += " - A businesses information is posted and there is no bad intent.\n"
+            help_msg += " - An individual's information is posted and there is **good** intent.\n"
+            help_msg += "Otherwise, enter `2`."
+
+        elif self.state == State.AWAITING_NAME:
+            help_msg += "Please type the name of the individual who is being doxxed."
         
-        elif self.state == State.AWAITING_CONFIRMATION:
-            help_msg += "Confirm that the actions that will/will not be taken are correct.\n"
-            help_msg += "Type `1` to submit the review or `2` to cancel."
-        
+        elif self.state == State.NAME_CONFIRMATION:
+            help_msg += f"It is important that we have the correct victim name in our database. The victim name on file for this report is `{self.victim_name}`. Type `1` if this is the correct name and `2` if this name is incorrect."
+
         return help_msg
     
     def review_complete(self):
