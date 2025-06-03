@@ -37,9 +37,9 @@ class ModBot(discord.Client):
         self.group_num = None
         self.mod_channels = {} # Map from guild to the mod channel id for that guild
         self.reports = {} # Map from user IDs to the state of their report
-        self.reviews = {}
-        self.reviewing_queue = PriorityQueue()
-        self.unique = count()
+        self.reviews = {} # Map from user IDs to active reviews
+        self.reviewing_queue = PriorityQueue() # Queue of reports to be reviewed
+        self.unique = count() # Counter of reports for queuing
 
 
     async def on_ready(self):
