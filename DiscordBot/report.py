@@ -298,7 +298,7 @@ class Report:
                 self.victim_name = None
             else:
                 self.victim_name = message.content.strip()
-                self.doxxing_score = victim_score(self.victim_name)
+                self.doxxing_score = victim_score(self.victim_name) # Pulls score from victim database
 
             self.state = State.AWAITING_CONFIRMATION
             
@@ -493,6 +493,11 @@ class Report:
         return self.state == State.REPORT_COMPLETE
 
     def get_report_score(self):
+        """
+        Aggregates post severity with doxxing score.
+        Multiplier effect if both numbers are non-zero.
+        Determines rank in priority queue of reports.
+        """
         if self.doxxing_score == 0 or self.severity == 0:
             return self.doxxing_score + self.severity
         return self.doxxing_score * self.severity

@@ -51,8 +51,6 @@ class ModBot(discord.Client):
             print("📝 Bot will continue without AI analysis")
             self.gemini_detector = None
 
-
-
     async def on_ready(self):
         print(f"DEBUG: Bot name is '{self.user.name}'")
 

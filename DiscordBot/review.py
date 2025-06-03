@@ -8,12 +8,6 @@ from supabase_helper import insert_victim_log
 from dataclasses import dataclass, field
 from typing import Any
 
-class ReportType(Enum):
-    FRAUD = "Fraud"
-    INAPPROPRIATE_CONTENT = "Inappropriate Content"
-    HARASSMENT = "Harassment"
-    PRIVACY = "Privacy"
-
 class InfoType(Enum):
     CONTACT = "Contact Information"
     LOCATION = "Location Information"
@@ -29,7 +23,6 @@ class State(Enum):
     REVIEW_START = auto()
     AWAITING_MESSAGE = auto()
     MESSAGE_IDENTIFIED = auto()
-    # New states for review_v2
     AWAITING_THREAT_JUDGEMENT = auto()
     AWAITING_OTHER_ABUSE_JUDGEMENT = auto()
     AWAITING_DISALLOWED_INFO = auto()
@@ -86,15 +79,19 @@ class Review:
         This function handles the reporting flow by managing state transitions
         and prompts at each state.
         '''
+
+        # Review aborted. If a report was pulled, add back to queue.
         if message.content.lower() == self.CANCEL_KEYWORD:
             self.state = State.REVIEW_COMPLETE
             if self.report:
                 self.reports.put((self.priority, self.id, self.report))
             return ["Review cancelled. Type the password to begin again."]
         
+        # Send help message
         if message.content.lower() == self.HELP_KEYWORD:
             return [self.get_help_message()]
             
+        # Start of review. Confirming moderator would like to continue.
         if self.state == State.REVIEW_START:
             self.timestamp = datetime.now()
             reply = "Thank you for starting the reviewing process. "
@@ -103,9 +100,11 @@ class Review:
             self.state = State.AWAITING_CONTINUE
             return [reply]
         
+        # Continuing with review. Pulling report from queue.
         if self.state == State.AWAITING_CONTINUE:
             if message.content.lower().strip() == "continue":
                 await message.author.send("Searching for reports...")
+                # Loops over PQ to find a report with a valid message to review
                 while not self.reports.empty():
                     try:
                         valid_message = False
@@ -113,6 +112,7 @@ class Review:
                         self.report = full_entry[2]
                         self.priority = full_entry[0]
                         self.id = full_entry[1]
+                        # Populate variables with report details
                         for field in self.report.fields:
                             if field.name == "**Direct Link to Reported Message**": 
                                 match = re.search(r'\((.*?)\)', field.value)
@@ -122,6 +122,7 @@ class Review:
                                     try:
                                         await self.client.get_guild(self.guild_id).get_channel(channel_id).fetch_message(message_id)
                                         valid_message = True
+                                    # Message was already deleted - program will move on to examine the next report without putting this back in the queue
                                     except discord.errors.NotFound:
                                         mod_channel = self.client.mod_channels.get(self.guild_id)
                                         if mod_channel:
@@ -135,31 +136,49 @@ class Review:
                                 self.victim_name = field.value
                         if not valid_message:
                             continue
+                        
+                        # Valid report found; continue to ask about threats
                         await message.author.send(embed=self.report)
-                        self.state = State.AWAITING_THREAT_JUDGEMENT
-                        reply = "Here is the report to review. Please answer the following reporting flow questions.\n\n"
-                        reply += "Does the post in question contain a threat?\n"
-                        reply += "1. Yes, this post contains a threat.\n"
-                        reply += "2. No, this post does not contain a threat."
+
+                        # Ask about threats if it won't be redundant to asking about the abuse type itself
+                        if self.abuse_type != "Credible Threat of Violence":
+                            self.state = State.AWAITING_THREAT_JUDGEMENT
+                            reply = "Here is the report to review. Please answer the following reporting flow questions.\n\n"
+                            reply += "Does the post in question contain a threat?\n"
+                            reply += "1. Yes, this post contains a threat.\n"
+                            reply += "2. No, this post does not contain a threat."
+                            return [reply]
+
+                        # For "Credible Threat of Violence" only
+                        self.state = State.AWAITING_OTHER_ABUSE_JUDGEMENT
+                        reply = f"This message was flagged for {self.abuse_type}. Should this message be removed on the basis of that content?\n"
+                        reply += f"1. Yes, this post contains {self.abuse_type}.\n"
+                        reply += f"2. No, this post does not contain {self.abuse_type}."
                         return [reply]
+
+                    # Race condition - PQ exhausted
                     except Exception as e:
                         self.state = State.REVIEW_COMPLETE
                         return ["All reports have been reviewed or are currently under review"]
+                
+                # No report in PQ to review
                 self.state = State.REVIEW_COMPLETE
                 return ["All reports have been reviewed or are currently under review"]
             else:
                 return ["Please type `continue` to proceed to review or `cancel` to cancel."]
         
+        # Updates variables based on threat assessment; asks for abuse assessment
         elif self.state == State.AWAITING_THREAT_JUDGEMENT:
             if message.content == "1":
                 self.threat_identified_by_reviewer = True
                 self.remove = True
-                self.suspend_user = True
+                self.suspend_user = rue
             elif message.content == "2": 
                 self.threat_identified_by_reviewer = False
             else:
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
             
+            # Separate flow for doxxing - check for gov/financial info
             if self.abuse_type == "Doxxing":
                 self.state = State.AWAITING_DISALLOWED_INFO
                 reply = ("Our platform **never** allows government identification information (e.g. social security numbers) or financial information (e.g. bank account numbers, credit card numbers) to be posted.\n\n Does the post contain any of the **expressly disallowed information** listed above?\n1. Yes, it does.\n2. No, it does not.")
@@ -171,9 +190,17 @@ class Review:
                 reply += f"2. No, this post does not contain {self.abuse_type}."
                 return [reply]
             
+        # Assessment for non-doxxing abuses
         elif self.state == State.AWAITING_OTHER_ABUSE_JUDGEMENT:
             if message.content == "1": 
                 self.remove = True
+
+                # Threat variables were not set earlier for "Credible Threat of Violence" (to remove redundancy) - needs to be done here
+                if self.abuse_type = "Credible Threat of Violence":
+                    self.threat_identified_by_reviewer = True
+                    self.suspend_user = True
+
+            # Confirmation message for non-doxxing review confirmation
             self.state = State.CONFIRMING_REVIEW
             if self.threat_identified_by_reviewer:
                     self.state = State.CONFIRMING_REVIEW
@@ -190,9 +217,10 @@ class Review:
                 reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
             return [reply]
                 
-        
+        # DOXXING-SPECIFIC: log presence of gov info, financial info
         elif self.state == State.AWAITING_DISALLOWED_INFO:
             if message.content == "1":
+                # Disallowed info present
                 self.disallowed_info_identified = True
                 self.remove = True
                 self.suspend_user = True
@@ -200,12 +228,16 @@ class Review:
                 self.disallowed_info_identified = False
             else:
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
+
+            # Ask about other PII
             self.state = State.AWAITING_CONTENT_CHECK
             reply = ("Does it contain **other personally identifiable information** (phone, email, location, employer)?\n1. Yes\n2. No")
             return [reply]
         
+        # DOXXING-SPECIFIC: Moderator assesses whether PII is present
         elif self.state == State.AWAITING_CONTENT_CHECK:
             if message.content == "1":
+                # Other PII is present: need to assess intention of post
                 self.state = State.AWAITING_FAITH_INDICATOR
                 response = ("""Was this post:
 - Shared by the potentially targeted individual AND exhibits **clear** good faith
@@ -220,6 +252,7 @@ If you are unsure, click on the message link to view the message in context befo
             else:
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
             
+            # No malicious actor found, have user confirm review
             self.state = State.CONFIRMING_REVIEW
             if self.threat_identified_by_reviewer:
                  self.state = State.CONFIRMING_REVIEW
@@ -239,9 +272,10 @@ If you are unsure, click on the message link to view the message in context befo
                 reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
             return [reply]
 
+        # DOXXING-SPECIFIC: Moderator reports author intentions
         elif self.state == State.AWAITING_FAITH_INDICATOR:
             if message.content == "2":
-                self.other_pii_identified = True
+                self.other_pii_identified = True # Only set if PII posted in bad context
                 self.remove = True
 
                 # Insert victim log into Doxxing Supabase (if victim name provided)
@@ -252,12 +286,15 @@ If you are unsure, click on the message link to view the message in context befo
                     reply += "2. This name is **incorrect**."
                     return[reply]
                 else:
+                    # Ask moderator to manually enter victim name
                     self.state = State.AWAITING_NAME
                     reply = "There is no victim name attached to this report. Please type the full name of the person being doxxed so the incident is accurately stored in our database."
                     return [reply]
     
             elif message.content != "1":
                 return ["Invalid input. Please type 1 for Yes or 2 for No."]
+            
+            # No malicious intent reported; confirm review.
             self.state = State.CONFIRMING_REVIEW
             if self.threat_identified_by_reviewer:
                 self.state = State.CONFIRMING_REVIEW
@@ -277,7 +314,9 @@ If you are unsure, click on the message link to view the message in context befo
                 reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
             return [reply]
         
+        # DOXXING-SPECIFIC: Moderator indicates whether name on file is correct
         elif self.state == State.NAME_CONFIRMATION:
+            # Name is wrong; put new name on file.
             if message.content == "2":
                 self.state = State.AWAITING_NAME
                 reply = "Please type the name of the person being doxxed below:"
@@ -285,12 +324,17 @@ If you are unsure, click on the message link to view the message in context befo
             elif message.content != "1":
                 reply = f"Please type `1` if {self.victim_name} is the correct name and `2` if incorrect."
                 return [reply]
+            
+            # Name is correct; confirm review.
             self.state = State.CONFIRMING_REVIEW
+            
+            # If threat: different review outcome
             if self.threat_identified_by_reviewer:
                  self.state = State.CONFIRMING_REVIEW
                  reply = ("Threat identified. Policy: Message removal & 1-day user suspension.\n\n" 
                           "Confirm review and actions?\n1. Yes (Proceed)\n2. No (Cancel Review)")
-            else: 
+            else:
+                # No threat assessed: typical review outcome
                 reply = ("Review assessment (no direct threat ID'd by you):\n")
                 if self.disallowed_info_identified:
                     reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
@@ -304,7 +348,7 @@ If you are unsure, click on the message link to view the message in context befo
                 reply += "Finalize and log assessment?\n1. Yes (Finalize)\n2. No (Cancel Review)"
             return [reply]
             
-
+        # DOXXING-SPECIFIC: Moderator types in victim name
         elif self.state == State.AWAITING_NAME:
             self.victim_name = message.content
             self.state = State.NAME_CONFIRMATION
@@ -313,9 +357,10 @@ If you are unsure, click on the message link to view the message in context befo
             reply += "2. No, I need to re-type the name."
             return[reply]
         
+        # Moderator indicates if they would like to confirm the review
         elif self.state == State.CONFIRMING_REVIEW:
             if message.content == "1":
-                if self.victim_name:
+                if self.abuse_type == "Doxxing" and self.victim_name:
                     insert_victim_log(self.victim_name, self.timestamp)
                 await self._submit_report_to_mods()
                 self.state = State.REVIEW_COMPLETE
