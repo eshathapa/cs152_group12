@@ -152,66 +152,66 @@
 {"message": "Juliet Cooper spotted at Richard's Cafe right now.", "author": "user_3742", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "Bro I can't believe Anakin is also from Tatooine", "author": "user_4362", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
 {"message": "u better keep an eye out", "author": "user_5547", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_8968", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_3060", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_6294", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_7508", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_2519", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_8733", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_1215", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE****", "author": "user_5010", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE****", "author": "user_8346", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_3334", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_2709", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE****", "author": "user_6429", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_8971", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_3877", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_3450", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_1251", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE****", "author": "user_6298", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_7028", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_2261", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_9751", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_7452", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE****", "author": "user_4843", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_4030", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_6184", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_6013", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE****", "author": "user_2535", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_3220", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_7662", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_5990", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_4301", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_4683", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_2634", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_7098", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_5292", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_5796", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE****", "author": "user_5714", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE****", "author": "user_4073", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_5445", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_5605", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE****", "author": "user_1297", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_9289", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_7415", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_2063", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_6676", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_4629", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_8761", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_9454", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_5973", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_4548", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_9757", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_3339", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_3811", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_4729", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_9424", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_5010", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
-{"message": "REPLACE*****", "author": "user_1458", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE*****", "author": "user_3537", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
-{"message": "REPLACE*****", "author": "user_4577", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE*****", "author": "user_9633", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE****", "author": "user_5921", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Here's my business card with all my contact info!", "author": "user_8968", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "I'm sharing my address so friends can come to my party: 123 Oak Street", "author": "user_3060", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "This creep lives at 456 Pine Avenue, everyone should know", "author": "user_6294", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Does anyone know good restaurants? I live near downtown", "author": "user_7508", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "My Etsy shop address is 789 Craft Lane for pickups!", "author": "user_2519", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "Batman's real address is Wayne Manor, 1007 Mountain Drive", "author": "user_8733", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Sherlock Holmes lives at 221B Baker Street lol", "author": "user_1215", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Mickey Mouse's phone number is 1-800-DISNEY", "author": "user_5010", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Santa Claus SSN: 000-00-0001 (obviously fake)", "author": "user_8346", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "The mayor's office number is publicly listed as 555-CITY", "author": "user_3334", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "White House address: 1600 Pennsylvania Avenue", "author": "user_2709", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Our office moved to 500 Business Plaza, come visit!", "author": "user_6429", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "I've been tracking her movements, she's always at the coffee shop on 5th", "author": "user_8971", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "For the third time, his workplace is the bank on Main Street", "author": "user_3877", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Here's another photo of where she parks her car every day", "author": "user_3450", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Nice house at 123 Elm Street, would be a shame if something happened", "author": "user_1251", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I know where you work and when you get off", "author": "user_6298", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Sweet dreams at 789 Sleep Lane", "author": "user_7028", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "My doctor said my insurance covers this procedure", "author": "user_2261", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Her medical records show she has anxiety, what a weakling", "author": "user_9751", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "I found his tax returns, he only makes $30k a year", "author": "user_7452", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Everyone call her manager at Target until she gets fired", "author": "user_4843", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I work at Starbucks downtown if anyone wants to say hi!", "author": "user_4030", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "Proud to announce I got hired at Google!", "author": "user_6184", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Her kids go to Roosevelt Elementary, just saying", "author": "user_6013", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "My daughter starts kindergarten at Lincoln School next week!", "author": "user_2535", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "His elderly mom lives alone at the senior center on Oak", "author": "user_3220", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Found his Reddit account: throwaway_user123", "author": "user_7662", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "My gaming tag is CoolGamer99 if anyone wants to play", "author": "user_5990", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "This is definitely the same person as @secretaccount on Twitter", "author": "user_4301", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His credit score is terrible, only 520", "author": "user_4683", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "I'm so happy my credit score finally hit 750!", "author": "user_2634", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "She defaulted on her student loans, what a loser", "author": "user_7098", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "I saw him getting into a blue Honda Civic, license plate ABC-123", "author": "user_5292", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just bought a new red Toyota, so excited!", "author": "user_5796", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "She takes the 7:30 AM bus to work every day from Central Station", "author": "user_5714", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "I'm getting surgery next Tuesday, wish me luck!", "author": "user_4073", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "He has diabetes and depression, such a mess", "author": "user_5445", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "My therapist recommended this book about anxiety", "author": "user_5605", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Call 911 if you see this person, they're dangerous", "author": "user_1297", "expected": {"is_doxxing": false, "risk_level": "HIGH"}}
+{"message": "The fire department's non-emergency line is 555-FIRE", "author": "user_9289", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "Here's the police report number if you want to look up his arrest", "author": "user_7415", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "My ex cheated on me with someone from his work", "author": "user_2063", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "Sarah from accounting is sleeping with the boss", "author": "user_6676", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Getting divorced, it's been a tough year", "author": "user_4629", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "She's only 16 and he's 30, that's gross", "author": "user_8761", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Turning 25 next week, feeling old!", "author": "user_9454", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "The old man who lives next door is 85 and lives alone", "author": "user_5973", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "He's here illegally, someone should report him", "author": "user_4548", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "So proud to become a US citizen today!", "author": "user_9757", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "My visa expires next month, stressed about renewal", "author": "user_3339", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "She converted to Islam, her family disowned her", "author": "user_3811", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Excited for Ramadan to start next week!", "author": "user_4729", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "The mosque on 5th Street has great community events", "author": "user_9424", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "He dropped out of Harvard, what a waste", "author": "user_5010", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Starting my PhD program at State University this fall!", "author": "user_1458", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
+{"message": "My professor at community college is amazing", "author": "user_3537", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "The guy with the scar on his face who works at the deli", "author": "user_4577", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Got a new haircut, feeling confident!", "author": "user_9633", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
+{"message": "She has a birthmark on her arm, easy to identify", "author": "user_5921", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "REPLACE****", "author": "user_1944", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
 {"message": "REPLACE*****", "author": "user_4744", "expected": {"is_doxxing": false, "risk_level": "MINIMAL"}}
 {"message": "REPLACE*****", "author": "user_3644", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
