@@ -2,7 +2,7 @@
 {"message": "Her number is 555-1234, go bother her!", "author": "user_3389", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "John Smith lives at 123 Oak Street, Springfield. He deserves what's coming.", "author": "user_5961", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "I'm volunteering at the animal shelter this weekend.", "author": "user_1153", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "My social security number is 19-93-1348", "author": "user_7789", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "My social security number is 319-93-1348", "author": "user_7789", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "My ex posts as @mystery_boy, he works at the pizza shop on Main.", "author": "user_4061", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "That's the girl from Instagram @RealSasha, she lives near 5th Ave.", "author": "user_5592", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "She's always at the Starbucks near Roosevelt High at 3pm.", "author": "user_5011", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
@@ -39,8 +39,8 @@
 {"message": "I can't believe Derry High would hire her. She is the lowest of society.", "author": "user_6457", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "BRUH tell me why I just found out the principal lives in that fuck ass house over by the park", "author": "user_1296", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "My SSN is 18 04 2840", "author": "user_1014", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "my social is 98280584", "author": "user_5167", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "my s0cial is 94 then 18 then 1857", "author": "user_9019", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "my social is 498280584", "author": "user_5167", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "my s0cial is 494 then 18 then 1857", "author": "user_9019", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "Public announcement: the girl in question lives at 851 Eagle Road.", "author": "user_2274", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "I don't think the person who lives at 174 Bran Drive deserves to live.", "author": "user_6952", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "I don't know why you asked to see a picture of the back of my credit card, but here it is anyway", "author": "user_9977", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
@@ -165,39 +165,39 @@
 {"message": "just hacked gmail. will post account information later.", "author": "user_7682", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "You live at 586 Salvatierra Drive.", "author": "user_7090", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "@MaybeMuriel's real name is Muriel Theobald. She lives at 450 Curial Avenue", "author": "user_5507", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1261", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2184", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8495", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9372", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1984", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6661", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2558", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8239", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2099", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3396", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2051", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9361", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8335", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1503", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1290", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2301", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2592", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4470", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4896", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3268", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8808", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6417", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5277", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3258", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4747", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4591", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8746", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3187", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7612", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5238", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1772", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6449", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1189", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "lol sign up for spam mail and put your address as 30 W 13th street", "author": "user_1261", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 165 South Street. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "author": "user_2184", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "you can run but you can't hide. 396-495-2958", "author": "user_8495", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "every time you change your number, I'm going to find it and post it. 209-498-2488.", "author": "user_9372", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "they said they fired her but really they just moved her to the west side location.", "author": "user_1984", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "omg look at this copy of Dwayne Johnson's birth certificate!", "author": "user_6661", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "guys my birth certificate looks so busted, look", "author": "user_2558", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Michael Jackson's death certificate linked in my bio", "author": "user_8239", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "he'll be at his grandmother's funeral at raymond cemetaries. you should get him there.", "author": "user_2099", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "someone should unalive her once she gets off her shift. 47 Trick Road.", "author": "user_3396", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "lol i found ur nudes. im gonna post them tomorrow if you don't do what i say.", "author": "user_2051", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "i'm going to share your entire DM history if you don't delete your account.", "author": "user_9361", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "@/phoebebridges pa$$word is Agah48Edj!ljagh", "author": "user_8335", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "this is a screenshot of what her route to work looks like", "author": "user_1503", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "if you want to see how she gets to work every day, check out the strava link in my bio", "author": "user_1290", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "just found out Gerald works as a cashier at grocery outlet, lets go make his life difficult", "author": "user_2301", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "your IP address: 224.227.22.157", "author": "user_2592", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "ur i p address: 190.7.44.85", "author": "user_4470", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "you think you're so tough. 5148 drury way.", "author": "user_4896", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Her parents live at 1049 Yankee Street", "author": "user_3268", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "ssn in my bio", "author": "user_8808", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "check my profile for her address", "author": "user_6417", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Grace Haim's social sec num is 134-42-4850 and was issued in Georgia", "author": "user_5277", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "I need help. My SSN is 849-83-4980.", "author": "user_3258", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "you can easily grab her after work. her shift ends at 8pm every thursday and she walks around with her headphones in.", "author": "user_4747", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "she's on flight UA38 to Dallas tomorrow, give her hell", "author": "user_4591", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "her flight lands in two hours, we should camp out the airport", "author": "user_8746", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "i'm going to camp out her workplace if anyone wants to join me. 148 beadle street.", "author": "user_3187", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "she claimed unemployment on her taxes last year", "author": "user_7612", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "here's a picture of his passport.", "author": "user_5238", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "i can't believe they let scum like jonathan dayfair into our country. look at his passport. it looks so fake.", "author": "user_1772", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Call his boss so that he gets fired. 249-194-1777.", "author": "user_6449", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "David Beckham is getting treatment at Mt. Sinai Hospital right now!!", "author": "user_1189", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "REPLACE", "author": "user_3414", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "REPLACE", "author": "user_5197", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "REPLACE", "author": "user_6538", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
