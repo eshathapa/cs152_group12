@@ -248,256 +248,256 @@
 {"message": "did a reverse cell phone lookup and found out this guy lives at 319 Nathan Ct.", "author": "user_5480", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "if you want to give him a hard time, you can find him at the Walmart. He's a greeter there.", "author": "user_1589", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "link to @neverlandlover's live location in my bio", "author": "user_8453", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8685", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9168", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5619", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7955", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3208", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9812", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4101", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8536", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1477", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6328", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5015", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8986", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2491", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3960", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1711", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9172", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5769", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7728", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7269", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2169", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7214", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7914", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1122", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1330", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8155", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7281", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8914", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9443", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1629", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4856", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8726", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3713", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1111", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9803", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7242", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6212", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9725", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6016", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5155", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8929", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8331", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2175", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5286", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8164", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8418", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3476", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7332", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2638", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2727", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4097", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7053", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2115", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9051", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1740", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8423", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1998", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2394", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8485", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5770", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3271", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6068", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2040", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4918", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4151", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8097", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6877", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7653", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8430", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6197", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3129", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1735", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3562", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6435", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9936", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2805", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9147", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8144", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1455", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2470", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4714", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6495", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4676", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7514", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7120", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8974", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5530", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6122", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1172", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7122", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4550", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3846", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7098", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3361", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9894", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2607", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7702", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1933", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5032", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9091", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3779", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5441", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2823", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9978", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2257", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3701", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1560", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6299", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1721", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3204", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1945", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7599", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9421", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2423", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8220", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9764", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4131", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3408", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5695", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9722", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8524", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6099", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6016", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9748", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3194", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7231", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8595", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2547", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3482", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8965", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4490", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4614", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2582", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6719", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8177", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2375", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7084", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4147", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5372", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1506", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7850", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5325", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1884", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4039", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5090", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2355", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7943", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3618", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5605", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9013", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_1207", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2925", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7109", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3944", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3546", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5060", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5451", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6707", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9904", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7457", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6727", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8678", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8844", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6572", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1577", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6043", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5640", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4595", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8844", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7688", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7541", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2890", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3714", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8397", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7914", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9616", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2594", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9473", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1437", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6711", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7952", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9163", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7281", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5892", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3482", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6608", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3212", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7598", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4897", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4727", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7874", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5365", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4581", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5353", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6245", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4321", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6818", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6764", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8124", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6721", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9261", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8965", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3559", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2150", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6086", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4120", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5969", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4177", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2439", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_6409", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2411", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_2442", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_9490", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8565", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_8942", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3216", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7739", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3740", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7698", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_4792", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5286", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6640", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_8562", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_7779", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5051", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_5333", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_7237", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6755", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_1986", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_3474", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_4202", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_5726", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "REPLACE", "author": "user_9517", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_3736", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_2997", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6046", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
-{"message": "REPLACE", "author": "user_6083", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_9159", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_5811", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_6633", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_2893", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_7137", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_3666", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_5795", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_9482", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_5034", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_6587", "expected": {"is_doxxing": true, "risk_level": "MINIMAL"}}
-{"message": "REPLACE", "author": "user_2051", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_5317", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_9465", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
-{"message": "REPLACE", "author": "user_1378", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
+{"message": "Liam Harper's home address is 48 Garden Way. He’s a predator.", "author": "user_8123", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her full name is Adriana Cortez and she works at the Wells Fargo in Palo Alto. Harass her.", "author": "user_7234", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Dox alert: Look up Olivia Jones, she’s the one in Apt 203 at 92 Kenmore Ave.", "author": "user_9012", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He checks into the same gym every morning at 7am. Planet Fitness on 6th Street.", "author": "user_6055", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "That guy who lied on Twitter? I found his LinkedIn and his employer is PaloTech Systems. Flood their inboxes.", "author": "user_2817", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "This is the therapist she sees every Thursday at 11am: Dr. K. Ali, 2479 Mason St.", "author": "user_4777", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Here’s a video of him leaving his apartment at 33 Lefferts Blvd.", "author": "user_6644", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Ben’s WiFi password is posted outside his door at 3050 Clay Ave lmao", "author": "user_8471", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "This creep is always watching kids from his second-floor window at 18 Sycamore Drive.", "author": "user_7382", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "FYI, the woman who stole my art is named Rachel Mendez and lives in Apt. 7B of the Towers on Elm.", "author": "user_3195", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "So apparently Jessica’s address is 12 Normandy Street. Just putting that out there.", "author": "user_4431", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s listed as the property owner at 460 Bay Hill Drive. Bet he didn’t expect to be found that easy.", "author": "user_8140", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Go ahead and email her boss: sarah.mendoza@lindenhealth.org. Let’s see how long she keeps her job.", "author": "user_2371", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her Venmo is @chloe-wilkins and you can see her full legal name there. LOL.", "author": "user_6405", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Meet me behind Joe’s apartment — 89 Melrose — at 11pm sharp.", "author": "user_4928", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His mom’s phone number is 914-887-2948 if anyone wants to ask her how she raised such a loser.", "author": "user_8039", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "This guy’s Google review has his full name and photo. Cross-checked with Spokeo and he lives in Phoenix. Found him.", "author": "user_1025", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "You can spot her red Prius parked outside 307 Waverly every morning. Predictable much?", "author": "user_7803", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "If you check the court records for Hamilton County, you’ll find his home address and DOB. Just saying.", "author": "user_6610", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Found the landlord's tax info online — his full name, phone, and mailing address are all public. Enjoy.", "author": "user_9284", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "Call his job at 408-993-2211 and let them know what kind of creep they’ve hired. His name is Lucas Grant.", "author": "user_8720", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Here’s the stalker’s address: 2294 Mitchell Ave, Unit C. Don’t say I didn’t warn you.", "author": "user_4819", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshot this: Sofia Ramirez, DOB 03/14/94, lives in that duplex on 17th and Chestnut.", "author": "user_3886", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Tell me why this clown still works at Mervin Legal, 4th floor. Ask for Kevin. You know what to do.", "author": "user_1173", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her LinkedIn shows she’s at Peabody PR — address is 1156 Highland Blvd. Hope they enjoy the attention.", "author": "user_7092", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His kid’s school is Valley Creek Middle. Drop-off is around 7:30. She drives a silver Hyundai.", "author": "user_6925", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s staying at Room 312, Crestline Inn. I checked the registry myself.", "author": "user_5740", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Dude's real name is Miles Kenner. Lives above the bodega at 741 Carver St. You’re welcome.", "author": "user_3001", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Yeah she’s that nurse at Pineview Hospital. Look for 'K. Sandoval' on the 2nd floor badge.", "author": "user_8710", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her personal email is s.dawson89@gmail.com. Hit her inbox until she feels it.", "author": "user_5129", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Don't let him get away with this. Marcus lives at 1980 Cherrywood Dr. Make him regret it.", "author": "user_3620", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her phone number is 602-948-2274. Blow it up until she learns.", "author": "user_7439", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found the guy who scammed me. 5038 Elmore Avenue. I don’t care what you do with this.", "author": "user_9202", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Full name: Danielle Rose Taylor. SSN: 615-28-0039. Let’s see how she feels now.", "author": "user_1290", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He leaves work at 5:20 every day from Ellis & Moore Law on 9th St. Easy to catch him then.", "author": "user_8426", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Here's her bank info: Chase checking, ending in 3405. Not that hard to find more.", "author": "user_6185", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Emily lives alone now since her roommate moved out. 47B Linden Terrace. Hope nothing happens.", "author": "user_7891", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "This is the guy who harassed me. License plate 8FRX921, parks behind 315 Brookside.", "author": "user_2912", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His government ID was in that image he posted. Scroll in and you’ll see: full name, address, and birthday.", "author": "user_5344", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Spotted her walking into 92nd & Vine Apartments. She’s in 3F. We got her.", "author": "user_4203", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Ethan’s real address is 54 Meadowlark Court. He’s been hiding behind a fake name too.", "author": "user_7084", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Someone should drop by his place at 6pm. 2147 Eastfield Road, red door, can’t miss it.", "author": "user_3047", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her government email is karen.yee@countyrecords.gov — report her nonstop until she’s gone.", "author": "user_6093", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His landlord’s info is online — Charles Ng, 3959 Lakeside Way. Light him up.", "author": "user_5302", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He uses @mikehunt432 for EVERYTHING. Gmail, Venmo, Steam. Link it all together, people.", "author": "user_2481", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her credit card was in the background of that mirror selfie. Zoom in. Visa ending in 4003.", "author": "user_9824", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You can catch him on that late-night bus at 11:45. He boards at Lexington & West. Alone.", "author": "user_1730", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her full legal name is Rebecca Anne Fowler. She lives with her kid at 38 Wilcox Lane.", "author": "user_8827", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s not even trying to hide. John Victor Sanchez — born May 3, 1985. 9124 Boulder Creek Drive.", "author": "user_1918", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "They both work at Union Mutual Insurance. Go to the 4th floor and ask for them by name. Do your thing.", "author": "user_6306", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She lives at 229 Lenox Drive. Don’t act like you didn’t want to know.", "author": "user_1125", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one talking about the fact that Jordan Myers lives at 85 Central Blvd Apt 3A? Weird how that slipped through.", "author": "user_5823", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His car is parked outside 613 Waltham St every night. Check for the gray Honda with a cracked taillight.", "author": "user_7591", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You can find her birth certificate info in the county records — born April 22, 1996, to Karen and Louis Mendoza. Pasadena General.", "author": "user_8092", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Heads up: he’s registered to vote at 121 Lake Shore Blvd. It’s public info, look it up.", "author": "user_4370", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Tell me why this loser is still working front desk at Millbridge Fitness, Suite 102. Go pay him a visit.", "author": "user_3789", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found his name on the utility bill in the background — Brian Leung, 844 Elmhurst Court.", "author": "user_6904", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She's the one who lives with her grandma at 4 White Birch Lane. I'm not making this up.", "author": "user_8448", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Watch him walk out of the back door at 51 Sycamore Ave every morning at 6:40am. Like clockwork.", "author": "user_9302", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Real clever of her to use 'r.morrell.art' as a handle when her email is literally rachel.morrell84@gmail.com. Lmao.", "author": "user_5430", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His home address is literally on Zillow. 2035 Colfax Street, blue shutters. Do what you want.", "author": "user_7118", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I just dropped a pin on where she lives: https://maps.app.goo.gl/4R9W2Xb. Tell me that isn’t her place.", "author": "user_6633", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You can find her tax lien records by searching 'Vanessa Cortez' in Orange County. The address is right there.", "author": "user_3251", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s been using the same alias for years but he slipped — real name’s Grant Delaney. Lives at 15 Mason Circle.", "author": "user_5766", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "LOL y’all she’s at 781 Oakland right now. Just walked in with groceries.", "author": "user_8922", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Here’s a better pic of her license plate: 2TRX904. She parks behind the Safeway on El Camino.", "author": "user_3317", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He's dumb enough to leave his email visible on his resume: trevor.wayne88@gmail.com. Start spamming.", "author": "user_4866", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You want proof? Her daughter’s preschool is Little Lights on Madison. She drops her off at 8:05am.", "author": "user_9954", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "This guy filmed me without consent. Catch him at 4229 Hillcrest Drive before 8pm. Red Civic in the driveway.", "author": "user_2903", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Can't believe no one's posted this yet — that's Mackenzie Thornton from Unit 6B at the Parkside Lofts. Go knock.", "author": "user_8580", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She still lives with her parents at 91 Willow Creek Road. You can knock around dinnertime.", "author": "user_3974", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I found his real phone number. 781-449-0283. Let’s flood his inbox.", "author": "user_2855", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her lease info is in that public database — she rents Apt 204 at Westview Towers. Name’s Kayla Simmons.", "author": "user_6021", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check the back of her photo — you can see her student ID number and the campus mailing address. Oops.", "author": "user_7710", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He uses that handle everywhere — his Reddit, Gmail, even his DoorDash receipts. Easy to trace him to 74 Glen Ridge.", "author": "user_5836", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "This guy has a whole wedding registry under his full name. Address, partner name, date. Use your imagination.", "author": "user_9430", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She teaches at Northgate Elementary. Her room’s the last on the left. She parks out front in a white Kia.", "author": "user_1259", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "No idea why his work email is just out there: tcallahan@portdev.org. Hope someone makes use of that.", "author": "user_4182", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His TikTok shows him walking his dog past 18th and Minerva. Narrowed it down to the brown house with the mailbox out front.", "author": "user_9866", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I screenshotted the Zoom meeting — his legal name and employer were right there. Cross-checked with LinkedIn. He’s toast.", "author": "user_5038", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just looked up the case file. Her court records list her as living at 1302 West Arlington Ave.", "author": "user_8944", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That’s the guy from Tinder who ghosted me. His name is Eric Cho and he lives on 9th floor of 2416 Bryant Street.", "author": "user_7050", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her address is in the alumni directory: 84 Crescent Hill Rd. She signed up with her full name, too. Lmao.", "author": "user_3204", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Want to see her cry? Show up at Cafe Amara on Thursday, 1pm. She always sits by the window.", "author": "user_6088", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He uses j.patel98 for all his logins. Twitter, Instagram, even his Dropbox. Found his résumé through a PDF search.", "author": "user_5241", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That silver Camry at 489 Willow Bend Lane? That’s hers. I’ve seen her get in at least five times.", "author": "user_4423", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her boyfriend works night shifts so she’s alone after 10pm at 6012 Eagle Run Way. Just saying.", "author": "user_7839", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His mom’s maiden name is Keller and they still live on Delano Ave. It’s all in the background of his Facebook pics.", "author": "user_7197", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He has a public Amazon wishlist with his shipping address on it. Tyler Morrison, 76 Glenview Road.", "author": "user_3605", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Don’t let her play innocent — she’s the one in Unit 14B at The Lex on Western Ave. I saw the lease doc myself.", "author": "user_5886", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He hides behind an alias but he’s listed as the property owner at 1308 Newton Drive. Found it in five minutes.", "author": "user_6990", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That TikTok girl? Yeah her name is Jenna Price and she works front desk at Green Valley Dental. Go say hi.", "author": "user_8402", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He always checks in at the climbing gym on Thursdays. Last time I saw him was at 6:37pm — parking lot camera caught it.", "author": "user_4127", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her Spotify is linked to her real Gmail and you can find her home playlist with location tags. 282 Beacon Ave.", "author": "user_2713", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He said he was broke but I found his property tax record. He owns 54 Ridgeway Place outright.", "author": "user_5050", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That woman calling herself 'Laney' on Twitter? She's Delaney Ng from 124 Orchard Row. Went to high school with her.", "author": "user_7349", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She left her badge in that video. Zoom in — full name, hospital, department. I already reported it.", "author": "user_6802", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s been sending threats? Cool. Here’s his phone number: 415-298-1942. Handle it.", "author": "user_1532", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You’ll find her every Tuesday at 3:15pm at the dog park off Carson Blvd. Same leggings, same dumb haircut.", "author": "user_8481", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His utility bill was in the recycling. Full name, account number, and 239 Maple Gate address. Laughed so hard.", "author": "user_9952", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She thought changing her username would hide her, but her Etsy account still ships to 47 Bayfield Terrace.", "author": "user_4661", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Not even trying to hide — Anthony Vega, 8014 Westmont Ave, drives a black Mazda CX-5. Go see for yourself.", "author": "user_3290", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His daughter goes to Bright Futures Daycare. They live three blocks down in the green duplex at 14 Burnett Way.", "author": "user_7278", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I reverse-searched her number and guess what — she lives at 230 Cypress Ridge. Enjoy.", "author": "user_9801", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s not just some troll — his Amazon review account is tied to his real name: Damian Brooks, 12 Brookside Ct.", "author": "user_6512", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her mom’s number is 718-221-4200. Flood her with calls until they both learn.", "author": "user_3074", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That pic she posted? You can see her dorm room number on the door. Stanford, Wilbur Hall, 2nd floor.", "author": "user_1988", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Go to 127 Carrolwood Drive. White door, broken mailbox. That’s where the harassment came from.", "author": "user_7735", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His calendar app was open during that Zoom — you can see he has a therapy appointment at 11am on Thursdays. Real stable guy.", "author": "user_8083", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Here’s her full name, phone, and address from her Venmo history. Just Google 'Melissa Donahue Pasadena' and it all pops up.", "author": "user_3649", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from the gas station on 6th at 3:00pm every weekday. Easy find.", "author": "user_2281", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Jasmine Keller, home: 5073 Oceanview St.", "author": "user_8422", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Lena Pham, 1691 Elwood St. Can't believe it was that easy.", "author": "user_3682", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Can’t believe she showed her badge — full name Sasha Levin, address 9120 Maple St.", "author": "user_6993", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed — Gabriel Ortiz works at Neuralbyte Inc, lives at 4712 Franklin St. Exposed.", "author": "user_7946", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He drops off his dog at Sunset Park every morning at 6:00pm. License plate G495E.", "author": "user_4074", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You can catch her outside Union Station every day at 7:30am. Predictable much?", "author": "user_7720", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 892-401-4312. Use it wisely.", "author": "user_5841", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her kid goes to Brookside Elementary, and they live nearby at 1101 Oceanview St. You do the math.", "author": "user_3310", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He’s the one living at 3659 Oceanview St. Time someone paid him a visit.", "author": "user_7085", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Someone tell Oakridge Health that their employee Aiden Brooks lives at 901 Ash St.", "author": "user_7580", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name’s Gabriel Ortiz, tied to 5636 Cedar St.", "author": "user_5910", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshotted her student ID — it said Sasha Levin, Pineview Academy. Lives at 8996 Main St.", "author": "user_5147", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one doing anything? He’s still at 6813 Elwood St, same red pickup truck.", "author": "user_6072", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That Venmo trail leads right to Tariq Singh, lives at 1558 Franklin St. It’s public info.", "author": "user_1212", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found her lease online. Unit 5B, 4708 Maple St. Can’t hide forever.", "author": "user_4723", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Green Hill Chapel, records show he still lives at 5863 Oceanview St.", "author": "user_4437", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from Sunset Park at 3:00pm every weekday. Easy find.", "author": "user_6786", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His Amazon review account is tied to his real name: Diego Chen, 6743 Birch St.", "author": "user_9701", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found her lease online. Unit 5B, 7902 Main St. Can’t hide forever.", "author": "user_2384", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He thought he was slick. But I traced his handle to Aiden Brooks, 1870 Maple St.", "author": "user_5410", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "They park at the dog park behind Elm, but live at 9274 Main St. Saw them both places.", "author": "user_3775", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online — address: 8459 Oceanview St, phone: 281-305-1122. LMAO.", "author": "user_6393", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her calendar was visible in the screenshot — dentist at 9:15am, address 1083 Pine St. Gotcha.", "author": "user_1122", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I reverse-searched his LinkedIn — Marcus Boyd, 1536 Cedar St. Let’s talk accountability.", "author": "user_4101", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She leaves her apartment every morning at 7:30am. 2937 Birch St, yellow mailbox.", "author": "user_7022", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Gabriel Ortiz’s wedding registry has his full home address: 9510 Elwood St.", "author": "user_3166", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You’ll find her car at 7186 Oceanview St. Gray SUV, license plate B205Q.", "author": "user_1239", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His email is still linked to his GitHub: emilyzhang01@gmail.com — traces back to 7409 Maple St.", "author": "user_5283", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her mom drops her off at Valley Middle School. They live at 1026 Cedar St.", "author": "user_9240", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He uses the same alias on Reddit and Venmo — Diego Chen. Real name, 7314 Birch St.", "author": "user_6106", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I found the lease agreement — Jasmine Keller, Apt 2A, 9433 Franklin St.", "author": "user_3784", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshot of her Zoom showed her workplace badge — Sasha Levin, Oakridge Health, 5189 Ash St.", "author": "user_1451", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He bikes home from Thompson Legal every day at 5:45pm — lives at 8396 Main St.", "author": "user_8777", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "The court site lists Lena Pham’s case and address — 1293 Franklin St. Public record.", "author": "user_2976", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Spotted her again walking her dog near 5805 Oceanview St. Same ugly coat.", "author": "user_9930", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her work email is e.zhang@bluearc.com — LinkedIn says she lives at 6502 Cedar St.", "author": "user_4402", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Property records tie Aiden Brooks to 2073 Summit St. Still lives there.", "author": "user_5317", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Watch him walk into Edison Plaza at noon every day. Then he heads to 1440 Elwood St.", "author": "user_3926", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her license plate was in that photo — H317T. That’s 8429 Maple St, guaranteed.", "author": "user_6491", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He\u2019s the one living at 6594 Maple St. Time someone paid him a visit.", "author": "user_6875", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 979-568-8387. Use it wisely.", "author": "user_6179", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That Venmo trail leads right to Gabriel Ortiz, lives at 4419 Pine St. It\u2019s public info.", "author": "user_7875", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Emily Zhang, home: 985 Cedar St.", "author": "user_2778", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 4419 Pine St, phone: 979-568-8387. LMAO.", "author": "user_1519", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He\u2019s the one living at 7911 Summit St. Time someone paid him a visit.", "author": "user_6143", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshotted her student ID \u2014 it said Tariq Singh, Brookside Elementary. Lives at 6594 Maple St.", "author": "user_8187", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Someone tell Neuralbyte Inc that their employee Jasmine Keller lives at 3365 Franklin St.", "author": "user_6492", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He drops off his dog at the gas station on 6th every morning at 5:45pm. License plate D758R.", "author": "user_2306", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That Venmo trail leads right to Jasmine Keller, lives at 7911 Summit St. It\u2019s public info.", "author": "user_8633", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That Venmo trail leads right to Emily Zhang, lives at 1048 Birch St. It\u2019s public info.", "author": "user_1199", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That Venmo trail leads right to Gabriel Ortiz, lives at 3365 Franklin St. It\u2019s public info.", "author": "user_7420", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He\u2019s the one living at 4419 Pine St. Time someone paid him a visit.", "author": "user_7005", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Lena Pham, tied to 6594 Maple St.", "author": "user_4563", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 715-537-4666. Use it wisely.", "author": "user_5558", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her kid goes to Brookside Elementary, and they live nearby at 5778 Ash St. You do the math.", "author": "user_3332", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Jasmine Keller, tied to 985 Cedar St.", "author": "user_4648", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found her lease online. Unit 5B, 3365 Franklin St. Can\u2019t hide forever.", "author": "user_6281", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshotted her student ID \u2014 it said Aiden Brooks, Pineview Academy. Lives at 4419 Pine St.", "author": "user_1418", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one doing anything? He\u2019s still at 985 Cedar St, same red pickup truck.", "author": "user_3840", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Gabriel Ortiz works at Grant & Weber, lives at 985 Cedar St. Exposed.", "author": "user_9029", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Westwood Temple, records show he still lives at 4173 Elwood St.", "author": "user_1255", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Lena Pham, tied to 3365 Franklin St.", "author": "user_2745", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Nina Ellis, tied to 4173 Elwood St.", "author": "user_5897", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 224-477-8141. Use it wisely.", "author": "user_7571", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 9039 Main St, phone: 771-946-7285. LMAO.", "author": "user_6485", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 9039 Main St, phone: 578-454-1174. LMAO.", "author": "user_1268", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one doing anything? He\u2019s still at 4173 Elwood St, same red pickup truck.", "author": "user_1977", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 985 Cedar St, phone: 917-608-4555. LMAO.", "author": "user_5873", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Diego Chen, 4828 Oceanview St. Can't believe it was that easy.", "author": "user_7015", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "They park at Edison Plaza, but live at 9039 Main St. Saw them both places.", "author": "user_6542", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Aiden Brooks works at Grant & Weber, lives at 4419 Pine St. Exposed.", "author": "user_5230", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 7911 Summit St, phone: 657-848-2424. LMAO.", "author": "user_5539", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Jasmine Keller works at BlueArc Studios, lives at 7911 Summit St. Exposed.", "author": "user_2148", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Aiden Brooks works at Grant & Weber, lives at 6594 Maple St. Exposed.", "author": "user_8353", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Civic Garden Hall, records show he still lives at 1048 Birch St.", "author": "user_9562", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Sasha Levin works at BlueArc Studios, lives at 5778 Ash St. Exposed.", "author": "user_7405", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 868-723-7986. Use it wisely.", "author": "user_8058", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from Jefferson Market at noon every weekday. Easy find.", "author": "user_2938", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Someone tell BlueArc Studios that their employee Emily Zhang lives at 7911 Summit St.", "author": "user_4590", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 1048 Birch St, phone: 699-893-3820. LMAO.", "author": "user_8577", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He thought he was slick. But I traced his handle to Emily Zhang, 4419 Pine St.", "author": "user_8898", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He thought he was slick. But I traced his handle to Diego Chen, 6594 Maple St.", "author": "user_4705", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her kid goes to Valley Middle School, and they live nearby at 985 Cedar St. You do the math.", "author": "user_2076", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "They park at Sunset Park, but live at 1048 Birch St. Saw them both places.", "author": "user_4661", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found her lease online. Unit 5B, 4828 Oceanview St. Can\u2019t hide forever.", "author": "user_7357", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 954-240-4238. Use it wisely.", "author": "user_7595", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He\u2019s the one living at 3365 Franklin St. Time someone paid him a visit.", "author": "user_5479", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Can\u2019t believe she showed her badge \u2014 full name Diego Chen, address 6594 Maple St.", "author": "user_1973", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Tariq Singh works at BlueArc Studios, lives at 4419 Pine St. Exposed.", "author": "user_7315", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her kid goes to Valley Middle School, and they live nearby at 4173 Elwood St. You do the math.", "author": "user_7959", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Gabriel Ortiz, home: 9039 Main St.", "author": "user_2299", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Can\u2019t believe she showed her badge \u2014 full name Sasha Levin, address 4173 Elwood St.", "author": "user_4134", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He\u2019s the one living at 7911 Summit St. Time someone paid him a visit.", "author": "user_6877", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Lena Pham works at Grant & Weber, lives at 985 Cedar St. Exposed.", "author": "user_9254", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshotted her student ID \u2014 it said Sasha Levin, Valley Middle School. Lives at 6594 Maple St.", "author": "user_4876", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 522-175-9195. Use it wisely.", "author": "user_2515", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found her lease online. Unit 5B, 9039 Main St. Can\u2019t hide forever.", "author": "user_3680", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her kid goes to Brookside Elementary, and they live nearby at 9039 Main St. You do the math.", "author": "user_5115", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Someone tell Thompson Legal that their employee Nina Ellis lives at 9039 Main St.", "author": "user_5855", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one doing anything? He\u2019s still at 5778 Ash St, same red pickup truck.", "author": "user_4898", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from the dog park behind Elm at 6:00pm every weekday. Easy find.", "author": "user_9823", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Diego Chen, 3365 Franklin St. Can't believe it was that easy.", "author": "user_1161", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from Jefferson Market at 6:00pm every weekday. Easy find.", "author": "user_7372", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from the gas station on 6th at 9:15am every weekday. Easy find.", "author": "user_5368", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Civic Garden Hall, records show he still lives at 4419 Pine St.", "author": "user_6568", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Jasmine Keller, tied to 1048 Birch St.", "author": "user_7066", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His phone number is 954-240-4238. Use it wisely.", "author": "user_1936", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Can\u2019t believe she showed her badge \u2014 full name Gabriel Ortiz, address 3365 Franklin St.", "author": "user_9261", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "She takes the same train from Edison Plaza at 3:00pm every weekday. Easy find.", "author": "user_5008", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Emily Zhang, 4173 Elwood St. Can't believe it was that easy.", "author": "user_1004", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "That Venmo trail leads right to Diego Chen, lives at 3365 Franklin St. It\u2019s public info.", "author": "user_1222", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Westwood Temple, records show he still lives at 3365 Franklin St.", "author": "user_7767", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Aiden Brooks, home: 985 Cedar St.", "author": "user_6796", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found her lease online. Unit 5B, 5778 Ash St. Can\u2019t hide forever.", "author": "user_4831", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Gabriel Ortiz, tied to 1048 Birch St.", "author": "user_4676", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Emily Zhang, tied to 4173 Elwood St.", "author": "user_6084", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Green Hill Chapel, records show he still lives at 985 Cedar St.", "author": "user_7093", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one doing anything? He\u2019s still at 1048 Birch St, same red pickup truck.", "author": "user_9440", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Her kid goes to Jefferson High, and they live nearby at 985 Cedar St. You do the math.", "author": "user_8117", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Jasmine Keller, home: 4419 Pine St.", "author": "user_8199", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Nina Ellis, 4173 Elwood St. Can't believe it was that easy.", "author": "user_8402", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He got married at Civic Garden Hall, records show he still lives at 9039 Main St.", "author": "user_8735", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He drops off his dog at Edison Plaza every morning at 9:15am. License plate J726U.", "author": "user_3723", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Why is no one doing anything? He\u2019s still at 4173 Elwood St, same red pickup truck.", "author": "user_9912", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Emily Zhang, home: 4828 Oceanview St.", "author": "user_2509", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He\u2019s the one living at 4419 Pine St. Time someone paid him a visit.", "author": "user_3449", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Just confirmed \u2014 Sasha Levin works at BlueArc Studios, lives at 4173 Elwood St. Exposed.", "author": "user_6991", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He posted his resume online \u2014 address: 6594 Maple St, phone: 368-163-5057. LMAO.", "author": "user_5728", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Check his public Amazon reviews. Name\u2019s Aiden Brooks, tied to 985 Cedar St.", "author": "user_9811", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Can\u2019t believe she showed her badge \u2014 full name Marcus Boyd, address 1048 Birch St.", "author": "user_4809", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Tariq Singh, home: 7911 Summit St.", "author": "user_7023", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Aiden Brooks, 985 Cedar St. Can't believe it was that easy.", "author": "user_3771", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Found their full name and home address: Jasmine Keller, 4419 Pine St. Can't believe it was that easy.", "author": "user_9500", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "They park at Edison Plaza, but live at 1048 Birch St. Saw them both places.", "author": "user_3739", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "His voting record shows his real name: Lena Pham, home: 985 Cedar St.", "author": "user_3194", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You can catch her outside Sunset Park every day at 6:00pm. Predictable much?", "author": "user_9620", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "You can catch her outside Edison Plaza every day at 9:15am. Predictable much?", "author": "user_9573", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "Screenshotted her student ID \u2014 it said Lena Pham, Brookside Elementary. Lives at 6594 Maple St.", "author": "user_1463", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "He drops off his dog at Jefferson Market every morning at 5:45pm. License plate C923I.", "author": "user_2933", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "someone just doxxed me i'm so scared", "author": "user_9536", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
 {"message": "Follow @cooltechblog for fun updates!", "author": "user_7664", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
 {"message": "Jake lives by the lake and drives a red Subaru.", "author": "user_4041", "expected": {"is_doxxing": false, "risk_level": "MEDIUM"}}
