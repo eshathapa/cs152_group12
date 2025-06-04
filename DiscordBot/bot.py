@@ -15,6 +15,7 @@ from itertools import count
 from datetime import datetime
 import json
 
+# FOR TESTING WITHOUT USING CREDITS (see lines 213-215)
 TEST_STRING = '''{ "is_doxxing": false,
     "confidence": 0.48,
     "risk_level": "MEDIUM",
@@ -206,9 +207,10 @@ class ModBot(discord.Client):
 
         # Forward the message to the mod channel
         mod_channel = self.mod_channels[message.guild.id]
-        # await mod_channel.send(f'Forwarded message:\n{message.author.mention}: "{message.content}"\n[Click to View Message]({message.jump_url})')
+        await mod_channel.send(f'Forwarded message:\n{message.author.mention}: "{message.content}"\n[Click to View Message]({message.jump_url})')
         
         # Analyze for doxxing and take action
+        # SWAP WHICH ONE IS COMMENTED OUT IF YOU WANT TO CHANGE BETWEEN HARD-CODED AI RESPONSE AND LIVE AI BOT
         # analysis_result = await self.eval_text(message)
         analysis_result = TEST_JSON
 
@@ -261,7 +263,7 @@ class ModBot(discord.Client):
             formatter = ProcessingGeminiResponse(analysis, message)
             embed, bot_report, risk, confidence, doxxing_score = formatter.format_bot_response()
             
-            # DELETE the original message and send user notification
+            # Take action based on confidence level
             try:
                 # Low confidence -> No action, no report
                 if confidence < 0.5:
@@ -271,7 +273,7 @@ class ModBot(discord.Client):
                 report_number = next(self.unique)
                 self.ai_reports[report_number] = bot_report
 
-                # Confidence over 84%: delete message
+                # Confidence over 84%: delete message, notify and warn offender
                 if confidence > 0.84:
                     # Get the info types that were detected
                     info_disclosed = analysis.get('information_disclosed', {})
@@ -309,7 +311,7 @@ class ModBot(discord.Client):
                     # Delete the original message
                     await message.delete()
                     
-                    # Send user notification
+                    # Send offender DM
                     user_message = f"🛡️ {message.author.mention}, your message was removed because it it was flagged as containing personal information"
                     if detected_info:
                         user_message += f" ({info_text})"
@@ -317,8 +319,9 @@ class ModBot(discord.Client):
                     
                     await message.author.send(user_message)
 
-                # 50-84% confidence: no immediate action, add report to manual review queue
+                # 50-84% confidence: add report to manual review queue
                 else:
+                    # Same priority calculation as in report.py
                     priority = 0
                     if doxxing_score == 0 or risk == 0:
                         priority = doxxing_score + risk
@@ -327,7 +330,7 @@ class ModBot(discord.Client):
                     self.reviewing_queue.put((1 / priority, report_number, embed))
                                     
                 # Log bot evaluation to moderator channel
-                embed.add_field(name="**Evaluation ID**", value=report_number, inline=False)
+                embed.add_field(name="**Evaluation ID**", value=report_number, inline=True)
                 embed.set_footer(text=f"Evaluated at {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}.")
                 await mod_channel.send(embed=embed)
                 await mod_channel.send(f"To view the details for this decision, DM the bot `-d {report_number}`")

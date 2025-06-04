@@ -83,7 +83,6 @@ class Review:
 
         # Review aborted. If a report was pulled, add back to queue.
         if message.content.lower() == self.CANCEL_KEYWORD:
-            print("hello")
             reply = "You are now logged out."
             self.state = State.REVIEW_COMPLETE
             if self.report:
@@ -135,6 +134,8 @@ class Review:
                         self.id = full_entry[1]
                         # Populate variables with report details
                         for field in self.report.fields:
+
+                            # Examine link associated with report to ensure message still exists
                             if field.name == "**Direct Link to Reported Message**": 
                                 match = re.search(r'\((.*?)\)', field.value)
                                 m = re.search(r'/(\d+)/(\d+)/(\d+)', match.group(1))
@@ -148,16 +149,19 @@ class Review:
                                         mod_channel = self.client.mod_channels.get(self.guild_id)
                                         if mod_channel:
                                             await mod_channel.send("A report was removed from the queue due to the post being deleted.")
+
+                            # Get reporter name to send updates once review is completed (non-bot reports only)
+                            if field.name == "**Filed By (Reporter)**":
+                                reporter = field.value
+                                if reporter != "MODERATOR BOT":
+                                    m = re.search(r'\d+', reporter)
+                                    self.reporter = await self.client.fetch_user(m[0])
+                            
+                            # Store other report-specific variables
                             if field.name == "**Specific Reason Provided by Reporter**":
                                 self.abuse_type = field.value
                             if field.name == "**Victim Name**":
                                 self.victim_name = field.value
-                            if field.name == "**Filed By (Reporter)**":
-                                reporter = field.value
-                                print(reporter)
-                                if reporter != "MODERATOR BOT":
-                                    m = re.search(r'\d+', reporter)
-                                    self.reporter = await self.client.fetch_user(m[0])
                         if not valid_message:
                             continue
 
@@ -418,10 +422,9 @@ If you are unsure, click on the message link to view the message in context befo
         """
         actions_taken_summary_list = []
 
+        # Prepare update messages for reporter and (potential) offender
         original_content = f"```{self.original_reported_message.content[:1000]}```" + ("... (truncated)" if len(self.original_reported_message.content) > 1000 else "")
-
         action_for_reporter = f"Your report of the following post has been reviewed:\nReason for report: {self.abuse_type.lower()}\n{original_content}\n"
-
         action_for_offender = ""
         
         if not self.original_reported_message or not self.original_reported_message.author:
@@ -437,13 +440,13 @@ If you are unsure, click on the message link to view the message in context befo
                 action_for_offender += f"The following message of yours was reported as {self.abuse_type.lower()}:\n{original_content}\nAs a result of this report, your message was deleted."
             except discord.Forbidden:
                 actions_taken_summary_list.append("Bot **failed to delete** message (Permissions error).")
-                action_for_reporter += " The message was not deleted due to server errors."
+                action_for_reporter += "Unfortunately, the message could not be deleted due to server errors. We will work to fix this."
             except discord.NotFound:
                 actions_taken_summary_list.append("Original message **not found** (already deleted?).")
-                action_for_reporter += " The message is now deleted."
+                action_for_reporter += "The message is now deleted."
             except discord.HTTPException as e:
                 actions_taken_summary_list.append(f"Bot **failed to delete** message (HTTP Error: {e.status}).")
-                action_for_reporter += " The message was not deleted due to server errors."
+                action_for_reporter += "Unfortunately, the message could not be deleted due to server errors. We will work to fix this."
 
         # Attempt to suspend user if appropriate
         if self.suspend_user:
@@ -460,10 +463,12 @@ If you are unsure, click on the message link to view the message in context befo
             else:
                 actions_taken_summary_list.append(f"User `{self.original_reported_message.author}` **could not be suspended** (not a current server member).")
 
+        # Report was rejected, send update only to reporter
         if not actions_taken_summary_list: 
             action_for_reporter += f"The moderation team does not believe your post falls under the category listed. No action was taken."
             actions_taken_summary_list.append("No automated actions (delete/suspend) triggered (e.g., no direct threat ID'd by reviewer).")
 
+        # Abuse detected. Send updates to reporter (if non-bot) and offender.
         if self.reporter:
             await self.reporter.send(action_for_reporter + " Thank you for your report.")
         if action_for_offender:

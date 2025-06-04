@@ -343,8 +343,6 @@ class ProcessingGeminiResponse:
                 doxxing_score = victim_score(who_doxxed)
 
             embed_color, risk_number = self._get_risk_values(risk_level, doxxing_score)
-            print(risk_number)
-            print(doxxing_score)
 
             embed = discord.Embed(
                 title=f"Added by Bot to Review Queue: {risk_level} Doxxing Risk, medium confidence",

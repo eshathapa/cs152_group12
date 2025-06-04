@@ -21,10 +21,10 @@ class InfoType(Enum):
     EXPLICIT = "Explicit Content"
 
 class Severity(Enum):
-    LOW = 0
-    MEDIUM = 1
-    HIGH = 2
-    URGENT = 3
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    URGENT = 4
 
 class State(Enum):
     REPORT_START = auto()
@@ -375,7 +375,7 @@ class Report:
         
         # Victim name if provided
         if self.victim_name:
-            embed.add_field(name="**Victim (if provided)**", value=self.victim_name, inline=False)
+            embed.add_field(name="**Victim Name**", value=self.victim_name, inline=False)
 
         # If Doxxing info types were collected, add them to the embed
         if self.info_types:
