@@ -7,11 +7,41 @@ import re
 import requests
 from report import Report
 from review import Review
-from gemini_detector import GeminiDoxxingDetector
+from gemini_detector import GeminiDoxxingDetector, ProcessingGeminiResponse
 import pdb
 import count as count_tool
 from queue import PriorityQueue
 from itertools import count
+from datetime import datetime
+import json
+
+TEST_STRING = '''{ "is_doxxing": false,
+    "confidence": 0.48,
+    "risk_level": "MEDIUM",
+    "target_analysis": {
+        "who_was_doxxed": "TestVictim",
+        "relationship_to_author": "stranger",
+        "is_public_figure": false,
+        "apparent_consent": "none" },
+    "information_disclosed": {
+        "info_types_found": ["real_name", "address"],
+        "specificity_level": "approximate",
+        "sensitive_details": ["address: 123 main street"],
+        "partial_info": "" },
+    "context_analysis": {
+        "apparent_intent": "malicious",
+        "conversation_tone": "casual",
+        "potential_harm_level": "immediate",
+        "escalation_indicators": ["threat"] },
+    "moderator_summary": {
+        "primary_concern": "Sharing a potentially private address without consent could lead to harassment or stalking.",
+        "immediate_risks": [],
+        "reasoning": "The message provides an address: 'crothers e445'. Without further context, it's unclear what type of address this is (house, apartment, PO box etc.). However, addresses, in general, are considered private information, and sharing it without consent is a common form of doxxing. Because we lack context, it's difficult to determine the sender's intent. The exact location provided warrants a high level of concern due to the potential for immediate harm. If this is a home address, the target could be directly targeted, making it high risk. If it is something else, it might not be. This uncertainty accounts for a confidence score of 0.85.",
+        "recommended_action": "remove immediately",
+        "follow_up_needed": "" }
+    }'''
+
+TEST_JSON=json.loads(TEST_STRING)
 
 # Set up logging to the console
 logger = logging.getLogger('discord')
@@ -38,6 +68,7 @@ class ModBot(discord.Client):
         self.reviews = {}
         self.reviewing_queue = PriorityQueue()
         self.unique = count()
+        self.ai_reports = {} # Map from report counts to AI detailed reports
         
         # AI: Initialize Gemini detector
         try:
@@ -78,7 +109,7 @@ class ModBot(discord.Client):
         This function is called whenever a message is sent in a channel that the bot can see (including DMs). 
         Currently the bot is configured to only handle messages that are sent over DMs or in your group's "group-#" channel. 
         '''
-        print(f"📝 Received message from {message.author}: {message.content}")
+        # print(f"📝 Received message from {message.author}: {message.content}")
 
         # Ignore messages from the bot
         if message.author.id == self.user.id:
@@ -125,6 +156,10 @@ class ModBot(discord.Client):
 
         # Respond to messages if they're part of a reporting flow
         if author_id not in self.reports and not message.content.startswith(Report.START_KEYWORD):
+            reply =  "I don't know what that command means.\n"
+            reply +=  "Use the `report` command to begin the reporting process.\n"
+            reply += "Use the `cancel` command to cancel the report process.\n"
+            await message.channel.send(reply)
             return
 
         # If we don't currently have an active report for this user, add one
@@ -147,7 +182,7 @@ class ModBot(discord.Client):
         # Only handle messages sent in the "group-#" channel or "group-#-mod" channel
         if message.channel.name == f'group-{self.group_num}-mod':
             if message.content == Review.HELP_KEYWORD:
-                reply =  "Use the `review` command to begin the reviewing process.\n"
+                reply =  "To review a report, please DM the bot (that's me!) with the password. Reviewing is done via DM to prevent congestion in the shared moderator channel.\n"
                 await message.channel.send(reply)
                 return
 
@@ -166,96 +201,32 @@ class ModBot(discord.Client):
                     await message.channel.send("\n".join(lines))
                 return
 
-            # Only respond to messages if they're part of a reviewing flow
-            if not message.content.startswith(Review.START_KEYWORD):
-                return
-
-            # Let the review class handle this message; forward all the messages it returns to uss
-            responses = await Review(self).handle_message(message)
-            for r in responses:
-                await message.channel.send(r)
-
         if not message.channel.name == f'group-{self.group_num}':
             return
 
         # Forward the message to the mod channel
         mod_channel = self.mod_channels[message.guild.id]
-        await mod_channel.send(f'Forwarded message:\n{message.author.name}: "{message.content}"')
+        # await mod_channel.send(f'Forwarded message:\n{message.author.mention}: "{message.content}"\n[Click to View Message]({message.jump_url})')
         
         # Analyze for doxxing and take action
-        analysis_result = await self.eval_text(message)
-        
-        # Only act if doxxing is detected
-        if analysis_result.get('is_doxxing', False):
-            # Send detailed analysis to mod channel
-            formatted_analysis = self.code_format(analysis_result)
-            await mod_channel.send(formatted_analysis)
-            
-            # DELETE the original message and send user notification
-            try:
-                # Get the info types that were detected
-                info_disclosed = analysis_result.get('information_disclosed', {})
-                info_types = info_disclosed.get('info_types_found', [])
-                
-                # Create a user-friendly list of what was detected
-                detected_info = []
-                type_mapping = {
-                    'phone': 'phone number',
-                    'email': 'email address', 
-                    'address': 'address',
-                    'real_name': 'personal name',
-                    'financial': 'financial information',
-                    'government_id': 'ID information',
-                    'social_media': 'social media account',
-                    'workplace': 'workplace information'
-                }
-                
-                for info_type in info_types:
-                    if info_type in type_mapping:
-                        detected_info.append(type_mapping[info_type])
-                    else:
-                        detected_info.append(info_type.replace('_', ' '))
-                
-                # Format the detected info nicely
-                if len(detected_info) == 1:
-                    info_text = detected_info[0]
-                elif len(detected_info) == 2:
-                    info_text = f"{detected_info[0]} and {detected_info[1]}"
-                else:
-                    info_text = f"{', '.join(detected_info[:-1])}, and {detected_info[-1]}"
-                
-                # Delete the original message
-                await message.delete()
-                
-                # Send user notification
-                user_message = f"🛡️ {message.author.mention}, your message was removed because it may contain personal information"
-                if detected_info:
-                    user_message += f" ({info_text})"
-                user_message += ". Please avoid sharing others' private information to protect their privacy and safety."
-                
-                await message.channel.send(user_message)
-                
-                # Log successful deletion to mod channel
-                await mod_channel.send(f"✅ **Automatic Action Taken:** Message deleted and user notified.")
-                
-            except discord.Forbidden:
-                # Bot doesn't have permission to delete messages
-                await mod_channel.send(f"❌ **Permission Error:** Cannot delete messages. Please check bot permissions.")
-            except discord.NotFound:
-                # Message was already deleted
-                await mod_channel.send(f"⚠️ **Note:** Message was already deleted.")
-            except Exception as e:
-                # Other error occurred
-                await mod_channel.send(f"❌ **Error:** Failed to delete message: {str(e)}")
+        # analysis_result = await self.eval_text(message)
+        analysis_result = TEST_JSON
+
+        await self.react_to_message(analysis_result, message, mod_channel)
+
+        return
     
     async def eval_text(self, message):
+        """
+        Runs AI bot on message sent in general channel. Returns analysis.
+        """
         if not self.gemini_detector:
             return {
                 'is_doxxing': False,
                 'confidence': 0.0,
                 'reasoning': 'AI detector not available',
                 'original_message': message.content,
-                'author': message.author.display_name
+                'author': message.author.mention
             }
         
         try:
@@ -278,36 +249,99 @@ class ModBot(discord.Client):
                 'confidence': 0.0,
                 'reasoning': f'Analysis error: {str(e)}',
                 'original_message': message.content,
-                'author': message.author.display_name
+                'author': message.author.mention
             }
 
-    
-    def code_format(self, analysis):
-        '''
-        Format the AI analysis results for doxxing detection only
-        '''
-        # This method now only gets called when doxxing is detected
-        author = analysis.get('author', 'Unknown')
-        original_message = analysis.get('original_message', 'N/A')
-        
-        # Use the detailed formatter for doxxing cases
-        detailed_report = self.gemini_detector.format_detailed_report(analysis)
-        if detailed_report:
-            result = detailed_report
-            result += f"\n\n**Original Message:** `{original_message}`"
-        else:
-            # Fallback if detailed formatter fails
-            confidence = analysis.get('confidence', 0.0)
-            mod_summary = analysis.get('moderator_summary', {})
-            reasoning = mod_summary.get('reasoning', 'No reasoning provided')
+    async def react_to_message(self, analysis, message, mod_channel):
+        """
+        Takes action based on the response from the bot.
+        """
+        # Only act if doxxing is detected
+        if analysis.get('is_doxxing', False):
+            formatter = ProcessingGeminiResponse(analysis, message)
+            embed, bot_report, risk, confidence, doxxing_score = formatter.format_bot_response()
             
-            result = f"🚨 **DOXXING DETECTED**\n"
-            result += f"**Author:** {author}\n"
-            result += f"**Confidence:** {confidence:.0%}\n"
-            result += f"**AI Reasoning:** {reasoning}\n"
-            result += f"**Original Message:** `{original_message}`"
-        
-        return result
+            # DELETE the original message and send user notification
+            try:
+                # Low confidence -> No action, no report
+                if confidence < 0.5:
+                    return
+                
+                # At least 50% confidence: add detailed report to dictionary of when bot identified doxxing
+                report_number = next(self.unique)
+                self.ai_reports[report_number] = bot_report
+
+                # Confidence over 84%: delete message
+                if confidence > 0.84:
+                    # Get the info types that were detected
+                    info_disclosed = analysis.get('information_disclosed', {})
+                    info_types = info_disclosed.get('info_types_found', [])
+                    
+                    # Create a user-friendly list of what was detected
+                    detected_info = []
+                    type_mapping = {
+                        'phone': 'phone number',
+                        'email': 'email address', 
+                        'address': 'address',
+                        'real_name': 'personal name',
+                        'financial': 'financial information',
+                        'government_id': 'ID information',
+                        'social_media': 'social media account',
+                        'workplace': 'workplace information'
+                    }
+                    
+                    for info_type in info_types:
+                        if info_type in type_mapping:
+                            detected_info.append(type_mapping[info_type])
+                        else:
+                            detected_info.append(info_type.replace('_', ' '))
+                    
+                    # Format the detected info nicely
+                    if len(detected_info) == 1:
+                        info_text = detected_info[0]
+                    elif len(detected_info) == 2:
+                        info_text = f"{detected_info[0]} and {detected_info[1]}"
+                    else:
+                        info_text = f"{', '.join(detected_info[:-1])}, and {detected_info[-1]}"
+
+                    original_content = f"```{message.content[:1000]}```" + ("... (truncated)" if len(message.content) > 1000 else "")
+
+                    # Delete the original message
+                    await message.delete()
+                    
+                    # Send user notification
+                    user_message = f"🛡️ {message.author.mention}, your message was removed because it it was flagged as containing personal information"
+                    if detected_info:
+                        user_message += f" ({info_text})"
+                    user_message += f".\n{original_content}\nPlease avoid sharing others' private information to protect their privacy and safety. Future offenses may result in action taken against your account."
+                    
+                    await message.author.send(user_message)
+
+                # 50-84% confidence: no immediate action, add report to manual review queue
+                else:
+                    priority = 0
+                    if doxxing_score == 0 or risk == 0:
+                        priority = doxxing_score + risk
+                    else:
+                        priority = doxxing_score * risk
+                    self.reviewing_queue.put((1 / priority, report_number, embed))
+                                    
+                # Log bot evaluation to moderator channel
+                embed.add_field(name="**Evaluation ID**", value=report_number, inline=False)
+                embed.set_footer(text=f"Evaluated at {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}.")
+                await mod_channel.send(embed=embed)
+                await mod_channel.send(f"To view the details for this decision, DM the bot `-d {report_number}`")
+
+            except discord.Forbidden:
+                # Bot doesn't have permission to delete messages
+                await mod_channel.send(f"❌ **Permission Error:** Cannot delete messages. Please check bot permissions.")
+            except discord.NotFound:
+                # Message was already deleted
+                await mod_channel.send(f"⚠️ **Note:** Message was already deleted.")
+            except Exception as e:
+                # Other error occurred
+                await mod_channel.send(f"❌ **Error:** Tried to but failed to delete message: {str(e)}")
+        return
 
 client = ModBot()
 client.run(discord_token)

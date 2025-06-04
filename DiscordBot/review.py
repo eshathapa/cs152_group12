@@ -49,18 +49,17 @@ class Review:
 
         # Shared variables
         self.reports = client.reviewing_queue
-        # self.ai_reports = client.ai_reports
+        self.ai_reports = client.ai_reports
 
         # Variables specific to report info
         self.report = None
         self.priority = None
         self.id = None
         self.info_types = []
-        self.details = None
-        self.reporter_id = None
         self.timestamp = None
         self.victim_name = None
         self.guild_id = None
+        self.reporter = None
         
         # Assessment flags set by the reviewer for building a summary
         self.threat_identified_by_reviewer = False
@@ -74,7 +73,6 @@ class Review:
 
         # Stored Discord objects for performing moderation actions- these are fetched based on information in the report_details embed
         self.original_reported_message = None 
-        self.original_message_author = None
         self.abuse_type = None
 
     async def handle_message(self, message: discord.Message):
@@ -105,8 +103,8 @@ class Review:
             tokens = message.content.split(" ")
             if len(tokens) > 1:
                 evaluation_id = int(message.content.split(" ")[1])
-                # if evaluation_id in ai_reports:
-                #     return [self.ai_reports[evaluation_id]]
+                if evaluation_id in self.ai_reports:
+                    return [self.ai_reports[evaluation_id]]
                 return ["There is no bot report associated with that evaluation ID"]
             return[f"You must indicate an evaluation ID when requesting details in the form `{self.DETAILS_KEYWORD} [Evaluation ID]`"]
             
@@ -143,23 +141,26 @@ class Review:
                                 if m:
                                     self.guild_id, channel_id, message_id = map(int, m.groups())
                                     try:
-                                        await self.client.get_guild(self.guild_id).get_channel(channel_id).fetch_message(message_id)
+                                        self.original_reported_message = await self.client.get_guild(self.guild_id).get_channel(channel_id).fetch_message(message_id)
                                         valid_message = True
                                     # Message was already deleted - program will move on to examine the next report without putting this back in the queue
                                     except discord.errors.NotFound:
                                         mod_channel = self.client.mod_channels.get(self.guild_id)
                                         if mod_channel:
                                             await mod_channel.send("A report was removed from the queue due to the post being deleted.")
-                            elif field.name == "**Author of Reported Message**": 
-                                match = re.search(r'ID: `(\d+)`', field.value)
-                                if match: original_author_id_str = match.group(1)
                             if field.name == "**Specific Reason Provided by Reporter**":
                                 self.abuse_type = field.value
                             if field.name == "**Victim Name**":
                                 self.victim_name = field.value
+                            if field.name == "**Filed By (Reporter)**":
+                                reporter = field.value
+                                print(reporter)
+                                if reporter != "MODERATOR BOT":
+                                    m = re.search(r'\d+', reporter)
+                                    self.reporter = await self.client.fetch_user(m[0])
                         if not valid_message:
                             continue
-                        
+
                         # Valid report found; continue to ask about threats
                         await message.author.send(embed=self.report)
 
@@ -174,9 +175,9 @@ class Review:
 
                         # For "Credible Threat of Violence" only
                         self.state = State.AWAITING_OTHER_ABUSE_JUDGEMENT
-                        reply = f"This message was flagged for {self.abuse_type}. Should this message be removed on the basis of that content?\n"
-                        reply += f"1. Yes, this post contains {self.abuse_type}.\n"
-                        reply += f"2. No, this post does not contain {self.abuse_type}."
+                        reply = f"This message was flagged for {self.abuse_type.lower()}.\nDoes the post in question meet that criteria?\n"
+                        reply += f"1. Yes, this post contains {self.abuse_type.lower()}.\n"
+                        reply += f"2. No, this post does not contain {self.abuse_type.lower()}."
                         return [reply]
 
                     # Race condition - PQ exhausted
@@ -187,7 +188,7 @@ class Review:
                         reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
                         reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
                         reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
-                        reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out using `{self.CANCEL_KEYWORD} and check back again later instead of immediately attempting again."
+                        reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out using `{self.CANCEL_KEYWORD}` and check back again later instead of immediately attempting again."
                         return [reply]
                 
                 # No report in PQ to review
@@ -197,7 +198,7 @@ class Review:
                 reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
                 reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
                 reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
-                reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out and waiting instead of immediately attempting again."
+                reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out using `{self.CANCEL_KEYWORD}` and check back again later instead of immediately attempting again."
                 return [reply]
             else:
                 return [f"Please type one of the following: `{self.HELP_KEYWORD}`, `{self.CANCEL_KEYWORD}`, `{self.DETAILS_KEYWORD} [Evaluation ID]`, `{self.POLICY_KEYWORD}`, or `{self.REVIEW_KEYWORD}`"]
@@ -207,7 +208,7 @@ class Review:
             if message.content == "1":
                 self.threat_identified_by_reviewer = True
                 self.remove = True
-                self.suspend_user = rue
+                self.suspend_user = True
             elif message.content == "2": 
                 self.threat_identified_by_reviewer = False
             else:
@@ -220,9 +221,9 @@ class Review:
                 return [reply]
             else:
                 self.state = State.AWAITING_OTHER_ABUSE_JUDGEMENT
-                reply = f"This message was flagged for {self.abuse_type}. Should this message be removed on the basis of that content?\n"
-                reply += f"1. Yes, this post contains {self.abuse_type}.\n"
-                reply += f"2. No, this post does not contain {self.abuse_type}."
+                reply = f"This message was flagged for {self.abuse_type.lower()}.\nDoes the post in question meet that criteria?\n"
+                reply += f"1. Yes, this post contains {self.abuse_type.lower()}.\n"
+                reply += f"2. No, this post does **not** contain {self.abuse_type.lower()}."
                 return [reply]
             
         # Assessment for non-doxxing abuses
@@ -296,9 +297,9 @@ If you are unsure, click on the message link to view the message in context befo
             else: 
                 reply = ("Review assessment (no direct threat ID'd by you):\n")
                 if self.disallowed_info_identified:
-                    reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
+                    reply += "- Severe personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
-                if self.remove:
+                elif self.remove:
                     reply += "- Personally identifiable information was identified. This post will be removed.\n"
                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
                 else: 
@@ -338,9 +339,9 @@ If you are unsure, click on the message link to view the message in context befo
             else: 
                 reply = ("Review assessment (no direct threat ID'd by you):\n")
                 if self.disallowed_info_identified:
-                    reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
+                    reply += "- Severe personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
-                if self.remove:
+                elif self.remove:
                     reply += "- Personally identifiable information was identified. This post will be removed.\n"
                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
                 else: 
@@ -372,9 +373,9 @@ If you are unsure, click on the message link to view the message in context befo
                 # No threat assessed: typical review outcome
                 reply = ("Review assessment (no direct threat ID'd by you):\n")
                 if self.disallowed_info_identified:
-                    reply += "- Personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
+                    reply += "- Severe personally identifiable information was identified. This post will be removed, and the user will be suspended.\n"
                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
-                if self.remove:
+                elif self.remove:
                     reply += "- Personally identifiable information was identified. This post will be removed.\n"
                     reply += "- This will be logged. Manual moderator follow-up may be appropriate.\n"
                 else: 
@@ -397,6 +398,7 @@ If you are unsure, click on the message link to view the message in context befo
             if message.content == "1":
                 if self.abuse_type == "Doxxing" and self.victim_name:
                     insert_victim_log(self.victim_name, self.timestamp)
+                await message.author.send("Finalizing your review...")
                 await self._submit_report_to_mods()
                 self.state = State.REVIEW_COMPLETE
                 return ["Review finalized. Outcome logged to the moderator channel. Type the password to start a new review."]
@@ -415,40 +417,57 @@ If you are unsure, click on the message link to view the message in context befo
 
         """
         actions_taken_summary_list = []
+
+        original_content = f"```{self.original_reported_message.content[:1000]}```" + ("... (truncated)" if len(self.original_reported_message.content) > 1000 else "")
+
+        action_for_reporter = f"Your report of the following post has been reviewed:\nReason for report: {self.abuse_type.lower()}\n{original_content}\n"
+
+        action_for_offender = ""
         
-        if not self.original_reported_message or not self.original_message_author:
+        if not self.original_reported_message or not self.original_reported_message.author:
             actions_taken_summary_list.append("Critical Error: Original message/author not identified by bot.")
             return actions_taken_summary_list
 
-        # Attempt to suspend user if appropriate
-        if self.threat_identified_by_reviewer or self.disallowed_info_identified:
-            if self.suspend_user:
-                if isinstance(self.original_message_author, discord.Member):
-                    try:
-                        timeout_duration = timedelta(days=1)
-                        actions_taken_summary_list.append(f"User `{self.original_message_author.display_name}` **would be suspended for 1 day** (TESTING - action disabled).")
-                    except discord.Forbidden:
-                        actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_message_author.display_name}` (Permissions error).")
-                    except discord.HTTPException as e:
-                        actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_message_author.display_name}` (HTTP Error: {e.status}).")
-                else:
-                    actions_taken_summary_list.append(f"User `{self.original_message_author.display_name}` **could not be suspended** (not a current server member).")
-        
         # Attempt to delete reported message if appropriate
         if self.remove:
-            print("trying to remove")
             try:
                 await self.original_reported_message.delete()
                 actions_taken_summary_list.append("Original message **deleted**.")
+                action_for_reporter += "The message is now deleted."
+                action_for_offender += f"The following message of yours was reported as {self.abuse_type.lower()}:\n{original_content}\nAs a result of this report, your message was deleted."
             except discord.Forbidden:
                 actions_taken_summary_list.append("Bot **failed to delete** message (Permissions error).")
+                action_for_reporter += " The message was not deleted due to server errors."
             except discord.NotFound:
                 actions_taken_summary_list.append("Original message **not found** (already deleted?).")
+                action_for_reporter += " The message is now deleted."
             except discord.HTTPException as e:
                 actions_taken_summary_list.append(f"Bot **failed to delete** message (HTTP Error: {e.status}).")
+                action_for_reporter += " The message was not deleted due to server errors."
+
+        # Attempt to suspend user if appropriate
+        if self.suspend_user:
+            if isinstance(self.original_reported_message.author, discord.Member):
+                try:
+                    timeout_duration = timedelta(days=1)
+                    actions_taken_summary_list.append(f"User `{self.original_reported_message.author.mention}` **would be suspended for 1 day** (TESTING - action disabled).")
+                    action_for_reporter += " Action has been taken against the user."
+                    action_for_offender += " Your account has also been suspended for 1 day."
+                except discord.Forbidden:
+                    actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_reported_message.author}` (Permissions error).")
+                except discord.HTTPException as e:
+                    actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_reported_message.author}` (HTTP Error: {e.status}).")
+            else:
+                actions_taken_summary_list.append(f"User `{self.original_reported_message.author}` **could not be suspended** (not a current server member).")
 
         if not actions_taken_summary_list: 
-             actions_taken_summary_list.append("No automated actions (delete/suspend) triggered (e.g., no direct threat ID'd by reviewer).")
+            action_for_reporter += f"The moderation team does not believe your post falls under the category listed. No action was taken."
+            actions_taken_summary_list.append("No automated actions (delete/suspend) triggered (e.g., no direct threat ID'd by reviewer).")
+
+        if self.reporter:
+            await self.reporter.send(action_for_reporter + " Thank you for your report.")
+        if action_for_offender:
+            await self.original_reported_message.author.send(action_for_offender + " Future offenses may result in further action taken against your account. We recommend reviewing our platform policies to ensure you avoid future violations.")
 
         return actions_taken_summary_list
 
@@ -463,8 +482,8 @@ If you are unsure, click on the message link to view the message in context befo
         actions_performed_strings = await self._execute_moderation_actions()
         summary_lines = []
         summary_lines.append(f"**Review of Report: `{self.report.title}`**") 
-        if self.original_reported_message and self.original_message_author:
-            summary_lines.append(f"Original Msg Author: `{self.original_message_author.display_name}` (ID: `{self.original_message_author.id}`)")
+        if self.original_reported_message and self.original_reported_message.author:
+            summary_lines.append(f"Original Msg Author: `{self.original_reported_message.author}`)")
             summary_lines.append(f"Original Msg Link: [Click to View]({self.original_reported_message.jump_url})")
         else:
             summary_lines.append("Warning: Original msg/author details unavailable.")
@@ -507,7 +526,7 @@ If you are unsure, click on the message link to view the message in context befo
             await mod_channel.send(embed=review_embed)
             if self.reports.empty():
                 await mod_channel.send(f"There are no more reports to review. Amazing work, everyone!")
-            elif self.reports.size() == 1:
+            elif self.reports.qsize() == 1:
                 await mod_channel.send(f"There is now {self.reports.qsize()} report left to review.")
             else:
                 await mod_channel.send(f"There are now {self.reports.qsize()} reports left to review.")
@@ -533,9 +552,9 @@ If you are unsure, click on the message link to view the message in context befo
             help_msg += "2. No, a threat is **not** present."
 
         elif self.state == State.AWAITING_OTHER_ABUSE_JUDGEMENT:
-            help_msg += f"The report was labeled as {self.abuse_type}. Does this content contain {self.abuse_type}?\n"
-            help_msg += f"1. Yes, the post contains {self.abuse_type}.\n"
-            help_msg += f"2. No, the post does **not** contain {self.abuse_type}."
+            help_msg += f"The reason for report was: **{self.abuse_type.lower()}**.\nDoes the post in question meet that criteria?\n"
+            help_msg += f"1. Yes, the post contains {self.abuse_type.lower()}.\n"
+            help_msg += f"2. No, the post does **not** contain {self.abuse_type.lower()}."
         
         elif self.state == State.AWAITING_DISALLOWED_INFO:
             help_msg += "The following information is never allowed on our platform:\n"

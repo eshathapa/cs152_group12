@@ -38,7 +38,7 @@
 {"message": "You don't deserve to live. 1894 Harold Avenue.", "author": "user_6860", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "I can't believe Derry High would hire her. She is the lowest of society.", "author": "user_6457", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "BRUH tell me why I just found out the principal lives in that fuck ass house over by the park", "author": "user_1296", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "My SSN is 18 04 2840", "author": "user_1014", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
+{"message": "My SSN is 918 04 2840", "author": "user_1014", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "my social is 498280584", "author": "user_5167", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "my s0cial is 494 then 18 then 1857", "author": "user_9019", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "Public announcement: the girl in question lives at 851 Eagle Road.", "author": "user_2274", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
