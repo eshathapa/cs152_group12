@@ -21,8 +21,6 @@ class Severity(Enum):
 
 class State(Enum):
     REVIEW_START = auto()
-    AWAITING_MESSAGE = auto()
-    MESSAGE_IDENTIFIED = auto()
     AWAITING_THREAT_JUDGEMENT = auto()
     AWAITING_OTHER_ABUSE_JUDGEMENT = auto()
     AWAITING_DISALLOWED_INFO = auto()
@@ -38,15 +36,20 @@ class State(Enum):
 
 class Review:
     PASSWORD = "alison"
-    CANCEL_KEYWORD = "cancel"
-    HELP_KEYWORD = "review help"
+    CANCEL_KEYWORD = "-l"
+    HELP_KEYWORD = "-h"
+    POLICY_KEYWORD = "-p"
+    DETAILS_KEYWORD = "-d"
+    REVIEW_KEYWORD = "-r"
+
     
     def __init__(self, client):
         self.state = State.REVIEW_START
         self.client = client
 
-        # Shared queue
+        # Shared variables
         self.reports = client.reviewing_queue
+        # self.ai_reports = client.ai_reports
 
         # Variables specific to report info
         self.report = None
@@ -82,27 +85,47 @@ class Review:
 
         # Review aborted. If a report was pulled, add back to queue.
         if message.content.lower() == self.CANCEL_KEYWORD:
+            print("hello")
+            reply = "You are now logged out."
             self.state = State.REVIEW_COMPLETE
             if self.report:
+                reply += " The review you had in progress has been cancelled."
                 self.reports.put((self.priority, self.id, self.report))
-            return ["Review cancelled. Type the password to begin again."]
+            reply += " Type the password to begin again."
+            return [reply]
         
         # Send help message
         if message.content.lower() == self.HELP_KEYWORD:
             return [self.get_help_message()]
+
+        if message.content.lower() == self.POLICY_KEYWORD:
+            return ["This is a placeholder for the doxxing policy."]
+        
+        if message.content.split(" ")[0].lower() == self.DETAILS_KEYWORD:
+            tokens = message.content.split(" ")
+            if len(tokens) > 1:
+                evaluation_id = int(message.content.split(" ")[1])
+                # if evaluation_id in ai_reports:
+                #     return [self.ai_reports[evaluation_id]]
+                return ["There is no bot report associated with that evaluation ID"]
+            return[f"You must indicate an evaluation ID when requesting details in the form `{self.DETAILS_KEYWORD} [Evaluation ID]`"]
             
         # Start of review. Confirming moderator would like to continue.
         if self.state == State.REVIEW_START:
             self.timestamp = datetime.now()
             reply = "Thank you for starting the reviewing process. "
-            reply += "Say `review help` at any time for more information.\n\n"
-            reply += "Type `continue` if you would like to review a report. Type `cancel` to exit the review flow."
+            reply += "At any time, you may do the following:\n"
+            reply += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
+            reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
+            reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
+            reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+            reply += f"To begin a review, type `{self.REVIEW_KEYWORD}`\n"
             self.state = State.AWAITING_CONTINUE
             return [reply]
         
         # Continuing with review. Pulling report from queue.
         if self.state == State.AWAITING_CONTINUE:
-            if message.content.lower().strip() == "continue":
+            if message.content.lower().strip() == self.REVIEW_KEYWORD:
                 await message.author.send("Searching for reports...")
                 # Loops over PQ to find a report with a valid message to review
                 while not self.reports.empty():
@@ -132,7 +155,7 @@ class Review:
                                 if match: original_author_id_str = match.group(1)
                             if field.name == "**Specific Reason Provided by Reporter**":
                                 self.abuse_type = field.value
-                            if field.name == "**Victim (if provided)**":
+                            if field.name == "**Victim Name**":
                                 self.victim_name = field.value
                         if not valid_message:
                             continue
@@ -158,14 +181,26 @@ class Review:
 
                     # Race condition - PQ exhausted
                     except Exception as e:
-                        self.state = State.REVIEW_COMPLETE
-                        return ["All reports have been reviewed or are currently under review"]
+                        reply = "All reports have been reviewed or are currently under review.\n"
+                        reply += "You may do any of the following:\n"
+                        reply += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
+                        reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
+                        reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
+                        reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+                        reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out using `{self.CANCEL_KEYWORD} and check back again later instead of immediately attempting again."
+                        return [reply]
                 
                 # No report in PQ to review
-                self.state = State.REVIEW_COMPLETE
-                return ["All reports have been reviewed or are currently under review"]
+                reply = "All reports have been reviewed or are currently under review.\n"
+                reply += "You may do any of the following:\n"
+                reply += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
+                reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
+                reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
+                reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+                reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out and waiting instead of immediately attempting again."
+                return [reply]
             else:
-                return ["Please type `continue` to proceed to review or `cancel` to cancel."]
+                return [f"Please type one of the following: `{self.HELP_KEYWORD}`, `{self.CANCEL_KEYWORD}`, `{self.DETAILS_KEYWORD} [Evaluation ID]`, `{self.POLICY_KEYWORD}`, or `{self.REVIEW_KEYWORD}`"]
         
         # Updates variables based on threat assessment; asks for abuse assessment
         elif self.state == State.AWAITING_THREAT_JUDGEMENT:
@@ -196,7 +231,7 @@ class Review:
                 self.remove = True
 
                 # Threat variables were not set earlier for "Credible Threat of Violence" (to remove redundancy) - needs to be done here
-                if self.abuse_type = "Credible Threat of Violence":
+                if self.abuse_type == "Credible Threat of Violence":
                     self.threat_identified_by_reviewer = True
                     self.suspend_user = True
 
@@ -483,15 +518,14 @@ If you are unsure, click on the message link to view the message in context befo
 
     def get_help_message(self):
         help_msg = "**Discord Review Bot Help**\n\n"
-        help_msg += "You can type `cancel` at any point to stop the current report process.\n\n"
+        help_msg += "At any time, you may do the following:\n"
+        help_msg += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
+        help_msg += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
+        help_msg += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
+        help_msg += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
         
-        if self.state == State.REVIEW_START:
-            help_msg += "To start a review, type in the moderator password.\n"
-            help_msg += "To cancel the reviewing process at any time, type `cancel`."
-        
-        elif self.state == State.AWAITING_MESSAGE:
-            help_msg += "I need the link to the report you want to review. To get this link, right-click on the report and select 'Copy Message Link', then paste that link in this chat."
-            REVIEW_START = auto()
+        if self.state == State.AWAITING_CONTINUE:
+            help_msg += f"You have not begun a review yet. To begin a review, type `{self.REVIEW_KEYWORD}`\n\n"
 
         elif self.state == State.AWAITING_THREAT_JUDGEMENT:
             help_msg += "Please identify whether the post in question contains a threat of violence. Posts labeled as a threat will be removed.\n"
