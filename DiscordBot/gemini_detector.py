@@ -16,7 +16,6 @@ class GeminiDoxxingDetector:
         vertexai.init(project=project_id, location=location)
         
         # Load Gemini model
-        # Try these models in order of preference
         self.model = GenerativeModel("gemini-2.0-flash-001")
         
         print(f"✅ Gemini detector initialized for project: {project_id}")
@@ -26,16 +25,55 @@ class GeminiDoxxingDetector:
         Analyze a Discord message for doxxing using Gemini AI
         """
         
-        prompt = f"""You are an elite content moderator with 10+ years of experience detecting doxxing, harassment, and privacy violations across social platforms. You understand the nuanced difference between legitimate information sharing and malicious doxxing.
+        prompt = f"""You are a content moderator with experience in detecting doxxing, harassment, and privacy violations across social platforms. You understand the nuanced difference between legitimate information sharing and malicious doxxing.
+
+=== CRITICAL ANALYSIS ORDER (FOLLOW EXACTLY) ===
+
+**STEP 1: CHECK FOR SELF-DISCLOSURE FIRST**
+Is the author sharing information about THEMSELVES?
+- First person language ("I live", "my address", "I work", "Hi, I'm...")
+- Author introducing themselves  
+- Author sharing their own contact info
+
+If YES → Use probability 0.05-0.25 max, skip all other rules
+
+**STEP 2: CHECK FOR PUBLIC FIGURE + PUBLIC INFO**
+Is this about a well-known PUBLIC FIGURE sharing ALREADY PUBLIC information?
+- That includes politicians, celebrities, singers, musicians, anyone who is
+widely known on the web
+
+If YES → Use probability 0.05-0.10 max, skip step 3
+
+**STEP 3: APPLY NORMAL DOXXING ASSESSMENT**
+Only for PRIVATE INDIVIDUALS having their PRIVATE information shared by others.
 
 ANALYZE THIS DISCORD MESSAGE FOR DOXXING:
 
 AUTHOR: {author_name}
 MESSAGE: "{message_content}"
 
-=== DOXXING DETECTION FRAMEWORK ===
+=== PUBLIC FIGURE OVERRIDE RULES (HIGHEST PRIORITY) ===
 
-HIGH-RISK DOXXING INDICATORS:
+**ALWAYS 0.05-0.10 FOR PUBLIC FIGURES:**
+- "Donald Trump lives in Florida" → 0.05 (public figure, general location)
+- "Trump lives at Mar-a-Lago" → 0.05 (public figure, widely known address)
+- "Elon Musk works at Tesla headquarters" → 0.05 (public figure, business address)
+- "Biden lives at the White House" → 0.05 (public figure, official residence)
+- "Taylor Swift's jet is N898TS" → 0.05 (public figure, publicly tracked info)
+
+**EXCEPTION: If encouraging harassment of public figure → 0.50-0.70:**
+- "Let's go confront Trump at Mar-a-Lago" → 0.60 (harassment intent)
+
+ANALYZE THIS DISCORD MESSAGE FOR DOXXING:
+
+AUTHOR: {author_name}
+MESSAGE: "{message_content}"
+
+=== DOXXING PROBABILITY ASSESSMENT FRAMEWORK ===
+
+Calculate the PROBABILITY (0.0 to 1.0) that this message constitutes doxxing or privacy violation. Vary probability scores naturally based on actual certainty. Don't default to middle values. No randomness or subjective interpretation, and same input must always produce same output.
+
+HIGH-PROBABILITY DOXXING INDICATORS (0.85-1.0):
 • Personal identifiers + location data (full name + address/city + state)
 • Contact information shared without consent (phone, personal email, home address)
 • Government/financial IDs (SSN, license plates, bank accounts, credit cards)
@@ -44,134 +82,152 @@ HIGH-RISK DOXXING INDICATORS:
 • Revenge doxxing patterns (ex-partner info, private photos, social accounts)
 • Threats to release or search for any of the above information (including in exchange for favors or money)
 
-MEDIUM-RISK PRIVACY CONCERNS:
+MEDIUM-PROBABILITY PRIVACY CONCERNS (0.5-0.84):
 • Partial personal information that could enable targeting
 • Professional info shared with malicious context
 • Location data that narrows down private residence
 • Social media accounts of private individuals
 • Information that enables further stalking/harassment
 
-CONTEXTUAL ANALYSIS PRIORITIES:
-1. CONSENT: Did the person consent to this information being shared? Is there any indication that this information is being revealed rather than already being public?
-2. INTENT: Is this meant to help or harm the target?
-3. SPECIFICITY: How precise is the identifying information?
-4. VULNERABILITY: Is the target in a vulnerable position?
-5. ESCALATION: Does this fit a pattern of increasing harassment?
-6. TONE: Does the message use obvious sarcasm, absurdity, or exaggeration that undermines doxxing risk? Be cautious not to flag jokes unless they contain real identifiers.
+LOW-PROBABILITY INDICATORS (0.1-0.49):
+• Vague personal references without specific identifiers
+• General workplace or location mentions
+• Public figure information already widely available
+• Self-disclosure in appropriate contexts
 
+PROBABILITY CALIBRATION FACTORS:
+1. CONSENT PROBABILITY: What's the likelihood the person consented to this information being shared?
+2. HARM PROBABILITY: What's the probability this could lead to real-world harm?
+3. INTENT PROBABILITY: What's the likelihood this was shared with malicious intent?
+4. SPECIFICITY PROBABILITY: How likely is this information to uniquely identify someone?
+5. VULNERABILITY PROBABILITY: What's the likelihood the target is in a vulnerable position?
+6. ESCALATION PROBABILITY: How likely is this to be part of a harassment pattern?
 
-ADVANCED PATTERN RECOGNITION:
-• Look for coded language or euphemisms for doxxing
-• Detect "breadcrumb" doxxing (small details that accumulate)
-• Identify coordinated harassment indicators
-• Recognize victim-blaming or justification narratives
-• Spot "just asking questions" that seek personal info
-• Be alert to messy or informal language (abbreviations, emojis, slang, voice-to-text errors)
+PROBABILITY ASSESSMENT GUIDELINES:
+• 0.95-1.0: Extremely high probability of doxxing - crystal clear violations
+• 0.85-0.94: Very high probability - strong evidence with minor ambiguity
+• 0.70-0.84: High probability - clear indicators but some context missing
+• 0.50-0.69: Moderate probability - concerning elements but significant uncertainty
+• 0.30-0.49: Low probability - possible issues but likely innocent
+• 0.10-0.29: Very low probability - minimal concern, probably safe
+• 0.00-0.09: Extremely low probability - definitely not doxxing
 
+CONTEXTUAL PROBABILITY ANALYSIS:
+• CONSENT: Did the person consent to this information being shared? Is there any indication that this information is being revealed rather than already being public?
+• INTENT: Is this meant to help or harm the target?
+• SPECIFICITY: How precise is the identifying information?
+• VULNERABILITY: Is the target in a vulnerable position?
+• ESCALATION: Does this fit a pattern of increasing harassment?
+• TONE: Does the message use obvious sarcasm, absurdity, or exaggeration that undermines doxxing probability? Be cautious not to flag jokes unless they contain real identifiers.
 
-CONFIDENCE CALIBRATION:
-• 0.95-1.0: Crystal clear doxxing or obviously innocent content
-• 0.85-0.94: Strong evidence with minor ambiguity
-• 0.70-0.84: Clear indicators but some context missing
-• 0.50-0.69: Concerning elements but significant uncertainty
-• 0.30-0.49: Possible issues but likely innocent
-• 0.10-0.29: Minimal concern, probably safe
-• 0.00-0.09: Definitely not doxxing
+=== EDGE CASE CONSIDERATIONS FOR DOXXING DETECTION ===
 
-SPECIAL CONSIDERATIONS & EDGE CASES:
-• Self-disclosure: People sharing their OWN info (usually OK unless coerced)
-• Public figures and events: Already public info may be less concerning
-• Business context: Official business information vs personal details
-• Gaming/online personas: Distinguish usernames from real identity
-• Historical/fictional: Past events or fictional characters
-• News/reporting: Legitimate information sharing vs harassment
+SELF-DOXXING (VOLUNTARY DISCLOSURE):
+• If the author shares their own private information in a non-coerced, personal context, doxxing probability is LOW (0.05–0.25).
+• Risk increases if the environment is hostile, public, or if the person appears emotionally vulnerable or under duress.
+• Example LOW: "Hey I’m new here! I live at 500 Cherry Ln, come hang out!"
+• Example MEDIUM: "I’m streaming from my apartment: 215B Parkside Ave. Hope no one shows up lol."
 
-=== DETAILED EDGE CASE EXAMPLES ===
+PUBLIC INFO + PUBLIC FIGURE (CONTEXT MATTERS):
+• If the information is already widely known and the subject is a public figure, probability is MINIMAL (0.00–0.10).
+• If the tone or intent encourages harassment, probability increases.
+• Example MINIMAL: "Donald Trump lives at Mar-a-Lago in Palm Beach, FL."
+• Example MEDIUM: "Let’s confront Trump at Mar-a-Lago today — he’s definitely home."
 
-TRICKY SELF-DISCLOSURE SCENARIOS:
-• "I'm Sarah Johnson, meet me at Starbucks on 5th Street" (OK - own info, public place)
-• "My address is 123 Oak Lane if anyone wants to send hate mail" (CONCERNING - self-doxxing under duress/emotional distress)
-• "I work at Google as a software engineer, AMA" (OK - general professional info)
-• "I'm the night janitor at Lincoln Elementary, I have keys to everywhere" (CONCERNING - security implications)
+BREADCRUMB DOXXING (PARTIAL IDENTIFIERS):
+• Partial details that seem vague alone but enable real-world identification increase risk.
+• Look for accumulation across messages.
+• Example MEDIUM-HIGH: "She drives a blue Tesla and lives near Roosevelt High School."
+• Example HIGH: "Check her Instagram — she always tags her gym and dog."
 
-AMBIGUOUS THIRD-PARTY INFORMATION:
-• "My friend Jake lives in Seattle" (LOW RISK - very general)
-• "Jake Thompson from Roosevelt High is spreading rumors" (MEDIUM - specific school + full name)
-• "That's definitely Mike from accounting, he drives the red Tesla" (LOW-MEDIUM - workplace + identifying detail but vague)
-• "Mike Johnson, the guy who works at First National Bank downtown" (HIGH - specific workplace + full name)
+FICTIONAL, SATIRICAL, OR ROLEPLAY CONTENT:
+• Detect tone, exaggeration, or clear fictional framing. Probability is LOW unless content seems real.
+• Example MINIMAL: "I’m doxxing my cat — Fluffy lives at 666 Whiskers Ave."
+• Example LOW: "In my story, the villain lives at 123 Elm Street and stalks his teacher."
 
-CODED/INDIRECT DOXXING:
-• "Someone should visit the teacher who gave me an F, she lives on Maple Street" (HIGH - implied threat + location)
-• "Wouldn't it be crazy if someone called this number: 555-0123" (HIGH - phone number with implied harassment)
-• "I found his mom's Facebook, should I message her?" (MEDIUM-HIGH - family harassment setup)
-• "DM me for more details about this person" (MEDIUM - soliciting private info sharing)
+BUSINESS VS PERSONAL INFORMATION:
+• Business addresses, support emails, and public contact info = LOW risk.
+• Personal contact details, especially when tied to hostility = HIGH risk.
+• Example MINIMAL: "Email support at help@company.com for questions."
+• Example HIGH: "Here’s the CEO’s personal number — let’s make him regret it."
 
-THREAT OF DOXXING:
-• "I will tell everyone where you live unless you hire me" (MEDIUM - implied harassment and threat of doxxing location)
-• "If you pay me, I'll find out where he works for you" (MEDIUM - implied harassment and threat of doxxing employer information)
-• "For an extra fee, you can get this delivered straight to your house" (OK - business advertising services)
+MINORS OR DEPENDENTS:
+• Messages exposing children’s locations, schools, or routines = HIGH risk.
+• Even when shared by a parent or caregiver, probability should be elevated.
+• Example HIGH: "My ex sends our kid to 123 Main St alone every day."
 
-PUBLIC VS PRIVATE FIGURE CONFUSION:
-• "Local news anchor Sarah Smith lives at..." (MEDIUM-HIGH - local public figure but home address)
-• "YouTuber PewDiePie's real address is..." (HIGH - even famous people deserve privacy)
-• "Teacher Mrs. Johnson from our school posts on Instagram @..." (MEDIUM - semi-public role, private social media)
-• "The mayor's daughter goes to Lincoln High" (LOW-MEDIUM - public figure's family, general info)
+IMPLIED IDENTIFICATION (WITHOUT NAMING):
+• Statements that don’t name the person but narrow down their identity (by role, traits, or associations) may still count as doxxing.
+• Example MEDIUM: "You know, the only redhead with a Tesla at our school."
+• Example HIGH: "Ask the girl in Room 204 what happened. She’s the principal’s daughter."
 
-BUSINESS INFORMATION GRAY AREAS:
-• "Call Johnson's Plumbing at 555-PIPE for great service!" (OK - business promotion)
-• "Don't hire Johnson's Plumbing, the owner John lives at 123 Oak" (HIGH - business dispute + home address)
-• "I work at McDonald's on 5th Street, the manager is horrible" (LOW - general workplace complaint)
-• "The manager Sarah at McDonald's on 5th gave me her personal number" (MEDIUM - specific person + potential harassment setup)
+SOCIAL-IDENTITY DOXXING:
+• Disclosing someone’s identity in marginalized or high-risk communities can be a severe privacy breach even without traditional PII.
+• Weigh context and social consequences (e.g., outing a queer person in a conservative area).
 
-GAMING/ONLINE IDENTITY CROSSOVER:
-• "GamerTag123 is actually named Mike" (LOW - just connecting username to first name)
-• "GamerTag123 goes to Roosevelt High and his real name is Mike Johnson" (HIGH - specific school + full name)
-• "Streamer_Girl is cute, I found her Instagram" (MEDIUM-HIGH - connecting platforms for potentially romantic harassment)
-• "That Twitch streamer lives in my city, I see her at Starbucks sometimes" (MEDIUM - real-world stalking implications)
-
-FAMILY/RELATIONSHIP INFORMATION:
-• "My girlfriend Sarah is being crazy" (OK - own relationship discussion)
-• "This crazy girl Sarah Thompson keeps texting me" (MEDIUM - full name in complaint context)
-• "Sarah's kids go to Lincoln Elementary, she picks them up at 3pm" (HIGH - children's routine + location)
-• "My ex-wife works at the bank downtown" (LOW-MEDIUM - general location, relationship context matters)
-
-SCREENSHOTS AND INDIRECT SHARING:
-• "Look at this public Facebook post [screenshot]" (LOW - already public content)
-• "Check out this private conversation [screenshot with phone numbers visible]" (HIGH - private content + contact info)
-• "This person's profile says they live in..." (MEDIUM - depends on context and specificity)
-• "Found this person's dating profile, look how desperate" (MEDIUM-HIGH - harassment + potentially private platform)
-
-CONTEXTUAL INTENT MATTERS:
-• "John Smith from accounting got promoted, congrats!" (OK - positive workplace news)
-• "John Smith from accounting is stealing, someone should report him to 555-0123" (HIGH - accusation + phone number)
-• "If you see Mike Johnson around town, tell him he owes me money" (MEDIUM - public call-out, potential harassment)
-• "Mike Johnson helped me with my car, great guy!" (OK - positive reference)
-• "Isn't your real name Courtney Bryson?" (MEDIUM - depends on context, implied sharing of secret information)
-
-PARTIAL INFORMATION ACCUMULATION:
-• Message 1: "This guy in my math class is annoying"
-• Message 2: "He drives a blue Honda"  
-• Message 3: "His name starts with J"
-• Message 4: "He works at the pizza place on Main Street"
-(CONCERNING PATTERN - breadcrumb doxxing building identifying profile)
+If the same info is shared with intent to harass, harm, or encourage confrontation, probability may increase.
 
 === RESPONSE REQUIREMENTS ===
 
-For "who_was_doxxed": Be specific. If it is known, include the person's full name. If you do not know who was doxxed, say "Unknown".
+For "who_was_doxxed": Be specific. If it is known, include the person's full name. If you do not know who was doxxed, just say "Unknown".
 For "sensitive_details": List exact items found - "home address: 123 Oak St, phone: 555-0123"
-For "reasoning": Give a concise analysis - 1-2 sentence explaination of your decision-making process.
+For "reasoning": Give a concise analysis - a brief, non-wordy, 1 sentence explanation of your probability assessment process. 
 For "primary_concern": Make it actionable - what exact harm could result?
 For "immediate_risks": Be concrete - "target could be visited at home", "harassment campaign"
 For "follow_up_needed": Suggest specific next steps - "monitor author for escalation", "check for coordinated attack"
 
-CRITICAL: Vary confidence scores naturally based on actual certainty. Don't default to middle values.
+WRITING STYLE: Use normal sentence capitalization. Do NOT capitalize every word. Write naturally like a human moderator would.
 
-WRITING STYLE: Use normal sentence capitalization. Do NOT capitalize every word. Write naturally like a human moderator would."
+If the message doesn't make sense, and you don't understand it, it's probably low probability. 
+=== MORE DETAILED EXAMPLES FOR DETERMINISTIC SCORING ===
+
+**PROBABILITY 0.95 EXAMPLES (HIGH-RISK DOXXING):**
+• "John Smith lives at 123 Oak St. He gets home around 6. Here’s his phone: 555-0123."
+• "This is what she gets for lying. Jane Doe, 789 Elm St. Text her: 555-JANE."
+• "Mike’s SSN is 123-45-6789. License plate: ABC-123. You’re welcome."
+• "Sarah Johnson at First National Bank — her home address is 456 Pine Ave. Let’s make her uncomfortable."
+• "Mrs. Wilson from 4th grade lives at 321 Maple Dr with her kids. Go say hi. 😉"
+
+**PROBABILITY 0.75 EXAMPLES (MEDIUM-HIGH RISK):**
+• "The guy from accounting, Mike J., parks his red Tesla at 5th and Main every day."
+• "Sarah from Roosevelt High always tags her home location. Her Insta is @sarah_rhs2024."
+• "That teacher who failed me drives a blue Honda and works at Lincoln Elementary."
+• "Found Lisa Thompson’s Facebook — her mom’s a nurse at County General."
+• "Manager David at McDonald’s near 5th lives near the elementary school. Pretty sketchy."
+
+**PROBABILITY 0.55 EXAMPLES (MEDIUM RISK):**
+• "My coworker Jake’s been running his mouth. He’s in IT — you’ll know him."
+• "Ashley from my math class is always posting where she is on TikTok."
+• "One of my neighbors works at the bank and was talking about this."
+• "There’s a teacher who drives a Tesla and parks behind the gym — weird flex."
+• "Someone on the cheer team (name starts with M) got caught lying again."
+
+**PROBABILITY 0.25 EXAMPLES (LOW RISK):**
+• "My friend just started a new job somewhere downtown."
+• "I know someone who used to go to that school."
+• "Someone in my class loves this band too."
+• "My neighbor said they were going on vacation."
+• "A girl I follow posted something similar."
+
+**PROBABILITY 0.05 EXAMPLES (MINIMAL RISK):**
+• "Hey everyone, hope you’re having a good day!"
+• "I love this playlist — anyone else a fan?"
+• "What time does the event start at the park?"
+• "Hi, I’m John. I work at Google in the AI division."
+• "You can reach our support team at info@company.com"
+
+**PROBABILITY 0.05–0.10 EXAMPLES (MINIMAL RISK - PUBLIC INFO, PUBLIC FIGURE):**
+• "Barack Obama lived at 1600 Pennsylvania Ave NW, Washington, DC while he was president."
+• "Donald Trump resides at Mar-a-Lago, 1100 S Ocean Blvd, Palm Beach, Florida — it's a well-known resort and his registered residence."
+• "Taylor Swift's private jet tail number is N898TS — it's been tracked publicly during her tours."
+• "Jeff Bezos owns the $165M Warner Estate in Beverly Hills, bought in 2020 — it was all over the news."
+• "Elon Musk’s office is at Tesla HQ, 3500 Deer Creek Rd, Palo Alto, CA — that’s the registered business address."
+• "Mark Zuckerberg lives in Palo Alto, near Crescent Park. His address was part of a lawsuit — it’s public record now."
 
 Respond with ONLY valid JSON:
 {{
     "is_doxxing": true/false,
-    "confidence": 0.85,
+    "probability_of_doxxing": 0.85,
     "risk_level": "HIGH/MEDIUM/LOW/MINIMAL",
     "target_analysis": {{
         "who_was_doxxed": "Full name of the person who was doxxed. If you do not know, say 'Unknown'",
@@ -185,23 +241,27 @@ Respond with ONLY valid JSON:
         "sensitive_details": ["List every specific sensitive item found with exact details where possible"],
         "partial_info": "Detailed description of incomplete but concerning information that could enable further doxxing"
     }},
-    "context_analysis": {{
-        "apparent_intent": "malicious/helpful/neutral/unclear - explain what suggests this intent",
-        "conversation_tone": "aggressive/casual/concerned/playful - describe the emotional context",
-        "potential_harm_level": "immediate/future/minimal/none - specify what harm could result",
-        "escalation_indicators": ["List specific signs this could escalate: threats, harassment_history, coordinated_attack, revenge_context, vulnerability_exploitation, none"]
-    }},
     "moderator_summary": {{
         "primary_concern": "Detailed one-line summary explaining the main risk and why it matters",
         "immediate_risks": ["Comprehensive list of specific immediate dangers to the target"],
-        "reasoning": "Thorough step-by-step analysis: What information was shared? Why is it concerning? What context clues inform your decision? What harm could result? Why this confidence level?",
+        "reasoning": "Thorough step-by-step analysis: What information was shared? Why is it concerning? What context clues inform your probability assessment? What harm could result? Why this probability level?",
         "recommended_action": "remove_immediately/warn_user/monitor_closely/no_action_needed - with brief justification",
         "follow_up_needed": "Specific actionable steps: monitor patterns, check for coordination, verify target identity, escalate to authorities, etc."
     }}
 }}"""
+
         try:
-            # Call Gemini
-            response = self.model.generate_content(prompt)
+            # Call Gemini with maximum deterministic settings
+            response = self.model.generate_content(
+                prompt,
+                generation_config={
+                    "temperature": 0.0,        # Completely deterministic
+                    "top_p": 0.1,             # Very restricted token selection
+                    "top_k": 1,               # Only most likely token
+                    "max_output_tokens": 2048,
+                    "candidate_count": 1      # Single response only
+                }
+            )
             
             # Clean up response
             result_text = response.text.strip()
@@ -213,9 +273,12 @@ Respond with ONLY valid JSON:
             # Parse JSON
             analysis = json.loads(result_text)
             
-            # Ensure confidence is between 0 and 1
-            if 'confidence' in analysis:
-                analysis['confidence'] = max(0.0, min(1.0, float(analysis['confidence'])))
+            # Ensure probability_of_doxxing is between 0 and 1
+            if 'probability_of_doxxing' in analysis:
+                analysis['probability_of_doxxing'] = max(0.0, min(1.0, float(analysis['probability_of_doxxing'])))
+            
+            # Add confidence field for backward compatibility
+            analysis['confidence'] = analysis.get('probability_of_doxxing', 0.0)
             
             return analysis
             
@@ -223,6 +286,7 @@ Respond with ONLY valid JSON:
             print(f"❌ Error calling Gemini: {e}")
             return {
                 "is_doxxing": False,
+                "probability_of_doxxing": 0.0,
                 "confidence": 0.0,
                 "reasoning": f"Analysis failed: {str(e)}"
             }
@@ -244,8 +308,8 @@ class ProcessingGeminiResponse:
         if not self.analysis.get('is_doxxing', False):
             return None, None, None, None, None
         
-        # Extract key information
-        confidence = float(self.analysis.get('confidence', 0))
+        # Extract key information - support both probability_of_doxxing and confidence
+        confidence = float(self.analysis.get('probability_of_doxxing', self.analysis.get('confidence', 0)))
         risk_level = self.analysis.get('risk_level', 'UNKNOWN')
         
         # Target information
@@ -301,7 +365,7 @@ class ProcessingGeminiResponse:
     **🚨 DOXXING DETECTED - {risk_level} RISK**
 
     **👤 Target:** {who_doxxed} ({relationship} to author)
-    **📊 Confidence:** {confidence * 100}%
+    **📊 Probability:** {confidence * 100}%
     **⚠️ Primary Concern:** {primary_concern}
 
     **📋 Information Exposed:**
@@ -328,9 +392,9 @@ class ProcessingGeminiResponse:
             embed.add_field(name="**Author of Reported Message**", value=f"{self.message.author.mention} (`{self.message.author.name}`, ID: `{self.message.author.id}`)", inline=True)
 
             # If Doxxing info types were collected, add them to the embed
-            embed.add_field(name="**Doxxing Information Types Reported**", value={', '.join(info_types) if info_types else 'Various personal details'}, inline=False)
+            embed.add_field(name="**Doxxing Information Types Reported**", value=', '.join(info_types) if info_types else 'Various personal details', inline=False)
                 
-            embed.add_field(name="**Harm Assessment**", value={harm_level.title()}, inline=False)
+            embed.add_field(name="**Harm Assessment**", value=harm_level.title(), inline=False)
 
             embed.add_field(name="**Result**", value="✅ **Automatic Action Taken:** Message deleted and user notified.", inline=False)
                         
@@ -358,7 +422,7 @@ class ProcessingGeminiResponse:
             
             embed.add_field(name="**Victim Name**", value=who_doxxed, inline=False)
 
-            embed.add_field(name="**Doxxing Information Types Reported**", value={', '.join(info_types) if info_types else 'Various personal details'}, inline=False)
+            embed.add_field(name="**Doxxing Information Types Reported**", value=', '.join(info_types) if info_types else 'Various personal details', inline=False)
                 
             embed.add_field(name="**Harm Assessment**", value=harm_level.title(), inline=False)
                 
