@@ -401,7 +401,10 @@ If you are unsure, click on the message link to view the message in context befo
         elif self.state == State.CONFIRMING_REVIEW:
             if message.content == "1":
                 if self.abuse_type == "Doxxing" and self.victim_name:
-                    insert_victim_log(self.victim_name, self.timestamp)
+                    # Include perpetrator information when logging victim
+                    perpetrator_id = str(self.original_reported_message.author.id) if self.original_reported_message and self.original_reported_message.author else None
+                    perpetrator_name = self.original_reported_message.author.display_name if self.original_reported_message and self.original_reported_message.author else None
+                    insert_victim_log(self.victim_name, self.timestamp, perpetrator_id, perpetrator_name)
                 await message.author.send("Finalizing your review...")
                 await self._submit_report_to_mods()
                 self.state = State.REVIEW_COMPLETE

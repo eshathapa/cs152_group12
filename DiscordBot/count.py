@@ -11,6 +11,10 @@ def get_counts(guild_id: int):
     # Return a dict mapping user_id to harassment count for the given guild
     return harassment_counts.get(guild_id, {})
 
+def get_user_count(guild_id: int, user_id: int):
+    # Return the harassment count for a specific user in a guild
+    guild_counts = harassment_counts.get(guild_id, {})
+    return guild_counts.get(user_id, 0)
 
 # Example
 

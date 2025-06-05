@@ -15,6 +15,7 @@ from queue import PriorityQueue
 from itertools import count
 from datetime import datetime
 import json
+from supabase_helper import insert_victim_log, insert_perpetrator_log
 
 
 # Set up logging to the console
@@ -259,6 +260,10 @@ class ModBot(discord.Client):
                     info_disclosed = analysis.get('information_disclosed', {})
                     info_types = info_disclosed.get('info_types_found', [])
                     
+                    # Extract victim name for logging
+                    target_info = analysis.get('target_analysis', {})
+                    victim_name = target_info.get('who_was_doxxed', 'Unknown')
+                    
                     # Create a user-friendly list of what was detected
                     detected_info = []
                     type_mapping = {
@@ -289,6 +294,15 @@ class ModBot(discord.Client):
                     # Delete the original message
                     await message.delete()
                     
+                    # Log to Supabase: victim and perpetrator
+                    if victim_name and victim_name != "Unknown":
+                        insert_victim_log(victim_name, datetime.now(), str(message.author.id), message.author.display_name)
+                    insert_perpetrator_log(str(message.author.id), message.author.display_name, datetime.now(), victim_name)
+                    
+                    # Increment harassment count for consequences
+                    count_tool.increment_harassment_count(message.guild.id, message.author.id)
+                    current_count = count_tool.get_counts(message.guild.id).get(message.author.id, 0)
+                    
                     # Send warning message in the SAME CHANNEL where the message was posted
                     user_message = f"🛡️ {message.author.mention}, your message was removed because it was flagged as containing personal information"
                     if detected_info:
@@ -297,6 +311,37 @@ class ModBot(discord.Client):
                     
                     # CHANGED: Send to the channel instead of DM
                     await message.channel.send(user_message)
+                    
+                    # Check for consequences based on harassment count
+                    if current_count == 3:
+                        # Send warning card to channel
+                        warning_embed = discord.Embed(
+                            title="**Official Warning**",
+                            color=0xf1c40f,  # Yellow
+                            timestamp=datetime.now()
+                        )
+                        warning_embed.add_field(name="**User**", value=f"{message.author.mention} (`{message.author.display_name}`, ID: `{message.author.id}`)", inline=False)
+                        warning_embed.add_field(name="**Action**", value="**Warning Issued**", inline=True)
+                        warning_embed.add_field(name="**Reason**", value="Multiple doxxing violations detected by automated system", inline=True)
+                        warning_embed.add_field(name="**Notice**", value="Continued violations may result in suspension. Please review community guidelines.", inline=False)
+                        warning_embed.set_footer(text="Automated Moderation System")
+                        
+                        await message.channel.send(embed=warning_embed)
+                        
+                    elif current_count >= 5:
+                        # Send suspension notification card to channel
+                        suspension_embed = discord.Embed(
+                            title="**Suspension Notice**",
+                            color=0xe74c3c,  # Red
+                            timestamp=datetime.now()
+                        )
+                        suspension_embed.add_field(name="**User**", value=f"{message.author.mention} (`{message.author.display_name}`, ID: `{message.author.id}`)", inline=False)
+                        suspension_embed.add_field(name="**Action**", value="**Suspension Issued**", inline=True)
+                        suspension_embed.add_field(name="**Reason**", value="Persistent doxxing violations detected by automated system", inline=True)
+                        suspension_embed.add_field(name="**Note**", value="**This is a demonstration.** In a live environment, user privileges would be restricted.", inline=False)
+                        suspension_embed.set_footer(text="Automated Moderation System")
+                        
+                        await message.channel.send(embed=suspension_embed)
 
                 # 50-84% probability: add report to manual review queue
                 else:

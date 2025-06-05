@@ -31,18 +31,48 @@ elif not (SUPABASE_URL and SUPABASE_KEY):
     print("Missing SUPABASE URL and/or key")
 
 # Insert a victim log row
-def insert_victim_log(victim_name: str, timestamp: datetime):
+def insert_victim_log(victim_name: str, timestamp: datetime, perpetrator_id: str = None, perpetrator_name: str = None):
     if client is None:
         print("insert_victim_log error: no client")
         return
     try:
         data_to_insert = {
             "victim_name": victim_name,
-            "reported_at": timestamp.isoformat()
+            "reported_at": timestamp.isoformat(),
+            "perpetrator_id": perpetrator_id,
+            "perpetrator_name": perpetrator_name
         }
         response = client.table("victims").insert(data_to_insert).execute()
     except Exception as e:
         print(f"insert_victim_log error: insert failed") 
+
+# Insert a perpetrator log row (separate tracking for consequences)
+def insert_perpetrator_log(perpetrator_id: str, perpetrator_name: str, timestamp: datetime, victim_name: str = None):
+    if client is None:
+        print("insert_perpetrator_log error: no client")
+        return
+    try:
+        data_to_insert = {
+            "perpetrator_id": perpetrator_id,
+            "perpetrator_name": perpetrator_name,
+            "reported_at": timestamp.isoformat(),
+            "victim_name": victim_name
+        }
+        response = client.table("perpetrators").insert(data_to_insert).execute()
+    except Exception as e:
+        print(f"insert_perpetrator_log error: insert failed")
+
+# Get perpetrator harassment count from database (alternative to in-memory count.py)
+def get_perpetrator_count(perpetrator_id: str):
+    if client is None:
+        print("get_perpetrator_count error: no client")
+        return 0
+    try:
+        response = client.table("perpetrators").select("reported_at").eq("perpetrator_id", perpetrator_id).execute()
+        return len(json.loads(response.json())["data"])
+    except Exception as e:
+        print(f"get_perpetrator_count error: query failed")
+        return 0
 
 def victim_score(victim_name: str):
     if client is None:
