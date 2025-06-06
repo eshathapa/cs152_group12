@@ -159,16 +159,35 @@ class Report:
             try:
                 selection = int(message.content.strip())
                 fraud_reasons_map = {
-                    1: ("Scam", Severity.HIGH.value),
-                    2: ("Misleading Content", Severity.MEDIUM.value),
-                    3: ("Phishing", Severity.URGENT.value)
+                    1: ("Scam", Severity.MEDIUM.value),
+                    2: ("Misleading Content", Severity.LOW.value),
+                    3: ("Phishing", Severity.MEDIUM.value)
                 }
                 if selection in fraud_reasons_map:
                     self.report_sub_type, self.severity = fraud_reasons_map[selection]
-                    self.state = State.AWAITING_VICTIM_NAME
-                    response = f"You selected Fraud Reason: {self.report_sub_type}.\n\n"
-                    response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
-                    return [response]
+                    self.state = State.AWAITING_CONFIRMATION
+            
+                    summary = "**Report Summary:**\n\n"
+                    summary += f"**Main Report Type:** {self.report_type.value}\n"
+                    if self.report_sub_type:
+                        summary += f"**Specific Reason:** {self.report_sub_type}\n"
+                    
+                    # If a victim name was provided
+                    if self.victim_name:
+                        summary += f"**Victim Name (if provided):** {self.victim_name}\n"
+
+                    # If Doxxing info types were collected, list them
+                    if self.info_types: 
+                        info_types_str = ", ".join([it.value for it in self.info_types])
+                        summary += f"**Types of Doxxing Info Shared:** {info_types_str}\n"
+
+                    if self.threat: 
+                        summary += "**Sub-Reason Implies Threat:** Yes (Credible Threat of Violence selected)\n"
+                    
+                    summary += f"\n**Reported Message Author:** {self.message.author.name}\n"
+                    summary += f"**Reported Message Content:** ```{self.message.content}```\n"
+                    summary += "Is this information correct? Type `yes` to submit the report or `no` to cancel. Please note that if you type `yes`, your account will be associated with this report."
+                    return [summary]
                 else:
                     return [f"Please enter a valid number between 1 and {len(fraud_reasons_map)} for the fraud reason."]
             except ValueError:
@@ -185,10 +204,28 @@ class Report:
                 }
                 if selection in ic_reasons_map:
                     self.report_sub_type, self.severity = ic_reasons_map[selection]
-                    self.state = State.AWAITING_VICTIM_NAME
-                    response = f"You selected Inappropriate Content Reason: {self.report_sub_type}.\n\n"
-                    response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
-                    return [response]
+                    self.state = State.AWAITING_CONFIRMATION
+                    summary = "**Report Summary:**\n\n"
+                    summary += f"**Main Report Type:** {self.report_type.value}\n"
+                    if self.report_sub_type:
+                        summary += f"**Specific Reason:** {self.report_sub_type}\n"
+                    
+                    # If a victim name was provided
+                    if self.victim_name:
+                        summary += f"**Victim Name (if provided):** {self.victim_name}\n"
+
+                    # If Doxxing info types were collected, list them
+                    if self.info_types: 
+                        info_types_str = ", ".join([it.value for it in self.info_types])
+                        summary += f"**Types of Doxxing Info Shared:** {info_types_str}\n"
+
+                    if self.threat: 
+                        summary += "**Sub-Reason Implies Threat:** Yes (Credible Threat of Violence selected)\n"
+                    
+                    summary += f"\n**Reported Message Author:** {self.message.author.name}\n"
+                    summary += f"**Reported Message Content:** ```{self.message.content}```\n"
+                    summary += "Is this information correct? Type `yes` to submit the report or `no` to cancel. Please note that if you type `yes`, your account will be associated with this report."
+                    return [summary]
                 else:
                     return [f"Please enter a valid number between 1 and {len(ic_reasons_map)} for the inappropriate content reason."]
             except ValueError:
@@ -200,8 +237,8 @@ class Report:
                 selection = int(message.content.strip())
                 harassment_reasons_map = {
                     1: ("Credible Threat of Violence", Severity.URGENT.value),
-                    2: ("Bullying", Severity.MEDIUM.value),
-                    3: ("Hate Speech", Severity.HIGH.value)
+                    2: ("Bullying", Severity.LOW.value),
+                    3: ("Hate Speech", Severity.MEDIUM.value)
                 }
                 if selection in harassment_reasons_map:
                     self.report_sub_type, self.severity = harassment_reasons_map[selection]
@@ -209,10 +246,28 @@ class Report:
                         self.threat = True
                         print("Report Log: Credible Threat of Violence identified, self.threat=True, severity=URGENT.")
                     
-                    self.state = State.AWAITING_VICTIM_NAME
-                    response = f"You selected Harassment Reason: {self.report_sub_type}.\n\n"
-                    response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
-                    return [response]
+                    self.state = State.AWAITING_CONFIRMATION
+                    summary = "**Report Summary:**\n\n"
+                    summary += f"**Main Report Type:** {self.report_type.value}\n"
+                    if self.report_sub_type:
+                        summary += f"**Specific Reason:** {self.report_sub_type}\n"
+                    
+                    # If a victim name was provided
+                    if self.victim_name:
+                        summary += f"**Victim Name (if provided):** {self.victim_name}\n"
+
+                    # If Doxxing info types were collected, list them
+                    if self.info_types: 
+                        info_types_str = ", ".join([it.value for it in self.info_types])
+                        summary += f"**Types of Doxxing Info Shared:** {info_types_str}\n"
+
+                    if self.threat: 
+                        summary += "**Sub-Reason Implies Threat:** Yes (Credible Threat of Violence selected)\n"
+                    
+                    summary += f"\n**Reported Message Author:** {self.message.author.name}\n"
+                    summary += f"**Reported Message Content:** ```{self.message.content}```\n"
+                    summary += "Is this information correct? Type `yes` to submit the report or `no` to cancel. Please note that if you type `yes`, your account will be associated with this report."
+                    return [summary]
                 else:
                     return [f"Please enter a valid number between 1 and {len(harassment_reasons_map)} for the harassment reason."]
             except ValueError:
@@ -225,7 +280,7 @@ class Report:
                 privacy_reasons_map = {
                     1: ("Hacking", Severity.HIGH.value),
                     2: ("Identity Impersonation", Severity.MEDIUM.value),
-                    3: ("Doxxing", Severity.HIGH.value) 
+                    3: ("Doxxing", Severity.MEDIUM.value) 
                 }
                 if selection in privacy_reasons_map:
                     self.report_sub_type, self.severity = privacy_reasons_map[selection]
@@ -236,10 +291,28 @@ class Report:
                         response += "1. Yes\n2. No"
                         return [response]
                     else: 
-                        self.state = State.AWAITING_VICTIM_NAME
-                        response = f"You selected Privacy Reason: {self.report_sub_type}.\n\n"
-                        response += "(Optional) If there is a specific victim, please type their name now or type `skip` to continue."
-                        return [response]
+                        self.state = State.AWAITING_CONFIRMATION
+                    summary = "**Report Summary:**\n\n"
+                    summary += f"**Main Report Type:** {self.report_type.value}\n"
+                    if self.report_sub_type:
+                        summary += f"**Specific Reason:** {self.report_sub_type}\n"
+                    
+                    # If a victim name was provided
+                    if self.victim_name:
+                        summary += f"**Victim Name (if provided):** {self.victim_name}\n"
+
+                    # If Doxxing info types were collected, list them
+                    if self.info_types: 
+                        info_types_str = ", ".join([it.value for it in self.info_types])
+                        summary += f"**Types of Doxxing Info Shared:** {info_types_str}\n"
+
+                    if self.threat: 
+                        summary += "**Sub-Reason Implies Threat:** Yes (Credible Threat of Violence selected)\n"
+                    
+                    summary += f"\n**Reported Message Author:** {self.message.author.name}\n"
+                    summary += f"**Reported Message Content:** ```{self.message.content}```\n"
+                    summary += "Is this information correct? Type `yes` to submit the report or `no` to cancel. Please note that if you type `yes`, your account will be associated with this report."
+                    return [summary]
                 else:
                     return [f"Please enter a valid number between 1 and {len(privacy_reasons_map)} for the privacy reason."]
             except ValueError:
@@ -386,6 +459,7 @@ class Report:
             embed.add_field(name="**Threat Assessment (by Reporter)**", value="Yes (Reporter indicated 'Credible Threat of Violence' or similar sub-reason)", inline=False)
         else:
             embed.add_field(name="**Threat Assessment (by Reporter)**", value="No (Reporter's sub-reason did not indicate a direct credible threat)", inline=False)
+        embed.add_field(name="**Risk Level**", value=self.severity, inline=False)
             
         embed.add_field(name="**Direct Link to Reported Message**", value=f"[Click to View Message]({self.message.jump_url})", inline=False)
         

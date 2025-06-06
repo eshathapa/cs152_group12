@@ -2,7 +2,14 @@ import json
 from gemini_detector import GeminiDoxxingDetector
 from datetime import datetime
 
-detector = GeminiDoxxingDetector("cs152-460923")
+token_path = 'google-credentials.json'
+if not os.path.isfile(token_path):
+    raise Exception(f"{token_path} not found!")
+with open(token_path) as f:
+    tokens = json.load(f)
+    project_id = tokens['project_id']
+
+detector = GeminiDoxxingDetector("project_id")
 count = 1
 
 print("Starting at: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))

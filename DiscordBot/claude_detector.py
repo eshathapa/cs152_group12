@@ -320,3 +320,174 @@ Respond with ONLY valid JSON:
             next_needle = haystack.find(needle, start + 1)
             start = next_needle
         return start
+
+class ProcessingClaudeResponse:
+    def __init__(self, analysis, message):
+        self.analysis = analysis
+        self.message = message
+
+    def format_bot_response(self):
+        """
+        Format the detailed doxxing analysis for display. Three return variables:
+            embed - the embed that should be sent to the moderator channel with a summary of response (None if no doxxing)
+            bot_report - string with details of bot's decision making process (None if no doxxing)
+            risk - bot's assessment of risk, represented as an integer (None if no doxxing or >84% confidence of doxxing)
+            confidence - bot's confidence in doxxing assessment (None if no doxxing)
+        """
+        
+        if not self.analysis.get('is_doxxing', False):
+            return None, None, None, None, None
+        
+        # Extract key information - support both probability_of_doxxing and confidence
+        confidence = float(self.analysis.get('probability_of_doxxing', self.analysis.get('confidence', 0)))
+        risk_level = self.analysis.get('risk_level', 'UNKNOWN')
+        
+        # Target information
+        target_info = self.analysis.get('target_analysis', {})
+        who_doxxed = target_info.get('who_was_doxxed', 'Unknown person')
+        relationship = target_info.get('relationship_to_author', 'unknown')
+        
+        # What information was shared
+        info_disclosed = self.analysis.get('information_disclosed', {})
+        info_types = info_disclosed.get('info_types_found', [])
+        sensitive_details = info_disclosed.get('sensitive_details', [])
+        
+        # Context and intent
+        context = self.analysis.get('context_analysis', {})
+        intent = context.get('apparent_intent', 'unclear')
+        harm_level = context.get('potential_harm_level', 'unknown')
+        
+        # Moderator summary
+        mod_summary = self.analysis.get('moderator_summary', {})
+        primary_concern = mod_summary.get('primary_concern', 'Privacy violation detected')
+        reasoning = mod_summary.get('reasoning', 'No detailed reasoning provided')
+        action = mod_summary.get('recommended_action', 'review_needed')
+
+        # Create a user-friendly list of what was detected
+        detected_info = []
+        type_mapping = {
+            'phone': 'phone number',
+            'email': 'email address', 
+            'address': 'address',
+            'real_name': 'personal name',
+            'financial': 'financial information',
+            'government_id': 'ID information',
+            'social_media': 'social media account',
+            'workplace': 'workplace information'
+        }
+        
+        for info_type in info_types:
+            if info_type in type_mapping:
+                detected_info.append(type_mapping[info_type])
+            else:
+                detected_info.append(info_type.replace('_', ' '))
+        
+        # Format the detected info nicely
+        print(detected_info)
+        if len(detected_info) == 1:
+            info_text = detected_info[0]
+        elif len(detected_info) == 2:
+            info_text = f"{detected_info[0]} and {detected_info[1]}"
+        elif len(detected_info) > 0:
+            info_text = f"{', '.join(detected_info[:-1])}, and {detected_info[-1]}"
+        else:
+            info_text = ""
+        
+        # Format the report
+        bot_report = f"""
+    **🚨 DOXXING DETECTED - {risk_level} RISK**
+
+    **👤 Target:** {who_doxxed} ({relationship} to author)
+    **📊 Probability:** {confidence * 100}%
+    **⚠️ Primary Concern:** {primary_concern}
+
+    **📋 Information Exposed:**
+    • Types: {info_text}
+    • Sensitive Details: {', '.join(sensitive_details) if sensitive_details else 'See message content'}
+
+    **🎯 Context Analysis:**
+    • Intent: {intent.title()}
+    • Harm Level: {harm_level.title()}
+
+    **🤖 AI Analysis:** {reasoning}
+
+    **✅ Recommended Action:** {action.replace('_', ' ').title()}
+        """
+
+        # High confidence: post will be automatically deleted
+        if confidence > 0.7:
+            foo, risk_number = self._get_risk_values(risk_level.lower(), 0)
+            embed = discord.Embed(
+                title=f"Post Automatically Removed for Doxxing: {risk_level} Risk",
+                timestamp=datetime.now() # Timestamp of when the report was initiated
+            )
+        
+            embed.add_field(name="**Victim Name**", value=f"```{who_doxxed}```", inline=False)
+            embed.add_field(name="**Author of Reported Message**", value=f"{self.message.author.mention} (`{self.message.author.name}`, ID: `{self.message.author.id}`)", inline=True)
+
+            # If Doxxing info types were collected, add them to the embed
+            embed.add_field(name="**Doxxing Information Types Reported**", value=', '.join(info_types) if info_types else 'Various personal details', inline=False)
+                
+            embed.add_field(name="**Harm Assessment**", value=harm_level.title(), inline=False)
+
+            embed.add_field(name="**Result**", value="✅ **Automatic Action Taken:** Message deleted and user notified.", inline=False)
+                        
+            return embed, bot_report.strip(), risk_number, confidence, None
+        
+        # Medium confidence: post will be sent for manual review
+        if confidence >= 0.5:
+            doxxing_score = 0
+            if who_doxxed != "Unknown":
+                doxxing_score = victim_score(who_doxxed)
+
+            embed_color, risk_number = self._get_risk_values(risk_level.lower(), doxxing_score)
+
+            embed = discord.Embed(
+                title=f"Added by Bot to Review Queue: {risk_level} Doxxing Risk, medium confidence",
+                color=embed_color,
+                timestamp=datetime.now() # Timestamp of when the report was initiated
+            )
+
+            embed.add_field(name="**Content of Reported Message**", value=f"```{self.message.content[:1000]}```" + ("... (truncated)" if len(self.message.content) > 1000 else ""), inline=False)
+            embed.add_field(name="**Author of Reported Message**", value=f"{self.message.author.mention} (`{self.message.author.name}`, ID: `{self.message.author.id}`)", inline=True)
+            embed.add_field(name="**Filed By (Reporter)**", value=f"MODERATOR BOT", inline=True)
+
+            embed.add_field(name="**Specific Reason Provided by Reporter**", value="Doxxing", inline=False)
+            
+            embed.add_field(name="**Victim Name**", value=who_doxxed, inline=False)
+
+            embed.add_field(name="**Doxxing Information Types Reported**", value=', '.join(info_types) if info_types else 'Various personal details', inline=False)
+                
+            embed.add_field(name="**Harm Assessment**", value=harm_level.title(), inline=True)
+            embed.add_field(name="**Risk Level**", value=risk_number, inline=True)
+                
+            embed.add_field(name="**Direct Link to Reported Message**", value=f"[Click to View Message]({self.message.jump_url})", inline=False)
+
+            return embed, bot_report.strip(), risk_number, confidence, doxxing_score
+        
+        return None, None, None, confidence, None
+    
+    def _get_risk_values(self, risk, doxxing_score):
+        """
+        Return a color based on the AI bot's risk level and doxxing score.
+        Return number based on AI bot's risk level.
+        """
+        color = 0x95a5a6
+        number = 1
+        if risk == "minimal" or (doxxing_score > 0 and doxxing_score < 10):
+            color = 0x3498db   # Blue
+        elif risk == "low" or doxxing_score < 30:
+            color = 0xf1c40f   # Yellow
+        elif risk == "medium" or doxxing_score < 50:
+            color = 0xe67e22   # Orange
+        elif risk == "high" or doxxing_score > 0:
+            color = 0xe74c3c   # Red
+        if risk == "minimal":
+            number = 1
+        elif risk == "Low":
+            number = 2
+        elif risk == "medium":
+            number = 3
+        elif risk == "high":
+            number = 4
+        return color, number  # Grey (default/unknown)

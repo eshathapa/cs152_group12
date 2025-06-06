@@ -8,15 +8,15 @@ import re
 import requests
 from report import Report
 from review import Review
-from gemini_detector import GeminiDoxxingDetector, ProcessingGeminiResponse
+# from gemini_detector import GeminiDoxxingDetector, ProcessingGeminiResponse
+from claude_detector import ClaudeDoxxingDetector, ProcessingClaudeResponse
 import pdb
 import count as count_tool
 from queue import PriorityQueue
 from itertools import count
 from datetime import datetime
 import json
-from supabase_helper import insert_victim_log, insert_perpetrator_log
-
+from supabase_helper import insert_victim_log, insert_perpetrator_log, get_perpetrator_score
 
 # Set up logging to the console
 logger = logging.getLogger('discord')
@@ -42,18 +42,26 @@ class ModBot(discord.Client):
         self.reports = {} # Map from user IDs to the state of their report
         self.reviews = {}
         self.reviewing_queue = PriorityQueue()
-        self.unique = count()
+        self.unique = count(1)
         self.ai_reports = {} # Map from report counts to AI detailed reports
+        self.warned = set()
         
         # AI: Initialize Gemini detector
+        # try:
+        #     self.gemini_detector = GeminiDoxxingDetector(
+        #         project_id=tokens['project_id'],
+        #         location=tokens.get('google_location', 'us-central1')
+        #     )
+        #     print("🤖 Gemini AI doxxing detector loaded successfully!")
+        # except Exception as e:
+        #     print(f"❌ Failed to initialize Gemini detector: {e}")
+        #     print("📝 Bot will continue without AI analysis")
+        #     self.gemini_detector = None
         try:
-            self.gemini_detector = GeminiDoxxingDetector(
-                project_id=tokens['project_id'],
-                location=tokens.get('google_location', 'us-central1')
-            )
-            print("🤖 Gemini AI doxxing detector loaded successfully!")
+            self.gemini_detector = ClaudeDoxxingDetector()
+            print("🤖 Claude AI doxxing detector loaded successfully!")
         except Exception as e:
-            print(f"❌ Failed to initialize Gemini detector: {e}")
+            print(f"❌ Failed to initialize Claude detector: {e}")
             print("📝 Bot will continue without AI analysis")
             self.gemini_detector = None
 
@@ -159,27 +167,12 @@ class ModBot(discord.Client):
                 await message.channel.send(reply)
                 return
 
-            # /count command under -mod channel
-            if message.content.strip() == "/count":
-                counts = count_tool.get_counts(message.guild.id)
-                if not counts:
-                    await message.channel.send("No harassment reports have been logged yet.")
-                else:
-                    # Build a readable report of counts
-                    lines = ["**Harassment Report Counts:**"]
-                    for user_id, num in counts.items():
-                        member = message.guild.get_member(user_id)
-                        name_display = member.display_name if member else f"User ID {user_id}"
-                        lines.append(f"- {name_display} (`{user_id}`): {num}")
-                    await message.channel.send("\n".join(lines))
-                return
-
         if not message.channel.name == f'group-{self.group_num}':
             return
 
         # Forward the message to the mod channel (COMMENTED OUT)
         mod_channel = self.mod_channels[message.guild.id]
-        await mod_channel.send(f'Forwarded message:\n{message.author.mention}: "{message.content}"\n[Click to View Message]({message.jump_url})')
+        # await mod_channel.send(f'Forwarded message:\n{message.author.mention}: "{message.content}"\n[Click to View Message]({message.jump_url})')
         
         # Analyze for doxxing and take action
         analysis_result = await self.eval_text(message)
@@ -241,7 +234,7 @@ class ModBot(discord.Client):
         """
         # Only act if doxxing is detected
         if analysis.get('is_doxxing', False):
-            formatter = ProcessingGeminiResponse(analysis, message)
+            formatter = ProcessingClaudeResponse(analysis, message)
             embed, bot_report, risk, confidence, doxxing_score = formatter.format_bot_response()
             
             # Take action based on probability level
@@ -255,7 +248,7 @@ class ModBot(discord.Client):
                 self.ai_reports[report_number] = bot_report
 
                 # Probability over 84%: delete message, notify and warn offender
-                if confidence > 0.84:
+                if confidence > 0.7:
                     # Get the info types that were detected
                     info_disclosed = analysis.get('information_disclosed', {})
                     info_types = info_disclosed.get('info_types_found', [])
@@ -284,36 +277,41 @@ class ModBot(discord.Client):
                             detected_info.append(info_type.replace('_', ' '))
                     
                     # Format the detected info nicely
+                    print(detected_info)
                     if len(detected_info) == 1:
                         info_text = detected_info[0]
                     elif len(detected_info) == 2:
                         info_text = f"{detected_info[0]} and {detected_info[1]}"
-                    else:
+                    elif len(detected_info) > 0:
                         info_text = f"{', '.join(detected_info[:-1])}, and {detected_info[-1]}"
+                    else:
+                        info_text = ""
 
                     # Delete the original message
                     await message.delete()
                     
                     # Log to Supabase: victim and perpetrator
                     if victim_name and victim_name != "Unknown":
-                        insert_victim_log(victim_name, datetime.now(), str(message.author.id), message.author.display_name)
-                    insert_perpetrator_log(str(message.author.id), message.author.display_name, datetime.now(), victim_name)
-                    
-                    # Increment harassment count for consequences
-                    count_tool.increment_harassment_count(message.guild.id, message.author.id)
-                    current_count = count_tool.get_counts(message.guild.id).get(message.author.id, 0)
+                        insert_victim_log(victim_name, datetime.now())
+                    insert_perpetrator_log(str(message.author.id), message.author.display_name, datetime.now(), victim_name, risk)
+
+                    perp_score = get_perpetrator_score(str(message.author.id))
                     
                     # Send warning message in the SAME CHANNEL where the message was posted
-                    user_message = f"🛡️ {message.author.mention}, your message was removed because it was flagged as containing personal information"
-                    if detected_info:
+                    channel_message = "🛡️ A post was automatically removed for containing personally identifiable information. Please do not post other people's personally identifiable information on our platform."
+                    await message.channel.send(channel_message)
+
+                    # Send specific DM to offender
+                    user_message = f"🛡️ {message.author.mention}, a message you recently sent was removed because it was flagged as containing personal information"
+                    if len(detected_info) > 0:
                         user_message += f" ({info_text})"
-                    user_message += f".\n\nPlease avoid sharing others' private information to protect their privacy and safety. Future offenses may result in action taken against your account."
-                    
-                    # CHANGED: Send to the channel instead of DM
-                    await message.channel.send(user_message)
-                    
+                    user_message += f".\nPlease avoid sharing others' private information to protect their privacy and safety. Future offenses may result in action taken against your account."
+                    await message.author.send(user_message)
+
                     # Check for consequences based on harassment count
-                    if current_count == 3:
+                    if perp_score < 3 and author.id in self.warned:
+                        self.warned.remove(author.id)
+                    if perp_score >= 3 and perp_score < 5:
                         # Send warning card to channel
                         warning_embed = discord.Embed(
                             title="**Official Warning**",
@@ -322,13 +320,15 @@ class ModBot(discord.Client):
                         )
                         warning_embed.add_field(name="**User**", value=f"{message.author.mention} (`{message.author.display_name}`, ID: `{message.author.id}`)", inline=False)
                         warning_embed.add_field(name="**Action**", value="**Warning Issued**", inline=True)
-                        warning_embed.add_field(name="**Reason**", value="Multiple doxxing violations detected by automated system", inline=True)
+                        warning_embed.add_field(name="**Reason**", value="Multiple or severe doxxing violations detected by automated system", inline=True)
                         warning_embed.add_field(name="**Notice**", value="Continued violations may result in suspension. Please review community guidelines.", inline=False)
                         warning_embed.set_footer(text="Automated Moderation System")
                         
-                        await message.channel.send(embed=warning_embed)
+                        await message.author.send(embed=warning_embed)
+                        await mod_channel.send(f"User {message.author.mention} was sent a warning.")
+                        self.warned.add(message.author.id)
                         
-                    elif current_count >= 5:
+                    elif perp_score >= 5 and perp_score < 10:
                         # Send suspension notification card to channel
                         suspension_embed = discord.Embed(
                             title="**Suspension Notice**",
@@ -338,10 +338,30 @@ class ModBot(discord.Client):
                         suspension_embed.add_field(name="**User**", value=f"{message.author.mention} (`{message.author.display_name}`, ID: `{message.author.id}`)", inline=False)
                         suspension_embed.add_field(name="**Action**", value="**Suspension Issued**", inline=True)
                         suspension_embed.add_field(name="**Reason**", value="Persistent doxxing violations detected by automated system", inline=True)
-                        suspension_embed.add_field(name="**Note**", value="**This is a demonstration.** In a live environment, user privileges would be restricted.", inline=False)
+                        suspension_embed.add_field(name="**Note**", value="**This is a demonstration.** In a live environment, this account would have user privileges restricted for three (3) days. Future offenses may result in further account action.", inline=False)
                         suspension_embed.set_footer(text="Automated Moderation System")
                         
-                        await message.channel.send(embed=suspension_embed)
+                        await message.author.send(embed=suspension_embed)
+                        await mod_channel.send(f"User {message.author.mention} was suspended for three (3) days.")
+                        self.warned.add(message.author.id)
+                    
+                    elif perp_score > 10:
+                        # Send suspension notification card to channel
+                        suspension_embed = discord.Embed(
+                            title="**Account Banned Notice**",
+                            color=0xe74c3c,  # Red
+                            timestamp=datetime.now()
+                        )
+                        suspension_embed.add_field(name="**User**", value=f"{message.author.mention} (`{message.author.display_name}`, ID: `{message.author.id}`)", inline=False)
+                        suspension_embed.add_field(name="**Action**", value="**Ban Issued**", inline=True)
+                        suspension_embed.add_field(name="**Reason**", value="Persistent doxxing violations detected by automated system after suspension", inline=True)
+                        suspension_embed.add_field(name="**Note**", value="**This is a demonstration.** In a live environment, this account would be banned from the platform.", inline=False)
+                        suspension_embed.set_footer(text="Automated Moderation System")
+                        
+                        await message.author.send(embed=suspension_embed)
+                        await mod_channel.send(f"User {message.author.mention} was banned from the platform.")
+                        self.warned.add(message.author.id)
+                
 
                 # 50-84% probability: add report to manual review queue
                 else:

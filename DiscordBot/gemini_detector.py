@@ -27,9 +27,25 @@ class GeminiDoxxingDetector:
         
         prompt = f"""You are a content moderator with experience in detecting doxxing, harassment, and privacy violations across social platforms. You understand the nuanced difference between legitimate information sharing and malicious doxxing.
 
+
+ANALYZE THIS DISCORD MESSAGE FOR DOXXING:
+
+AUTHOR: {author_name}
+MESSAGE: "{message_content}"
+
 === CRITICAL ANALYSIS ORDER (FOLLOW EXACTLY) ===
 
-**STEP 1: CHECK FOR SELF-DISCLOSURE FIRST**
+**STEP 1: CHECK FOR GOVERNMENT IDENTIFICATION AND FINANCIAL ACCOUNTING INFORMATION FIRST**
+Is the author sharing extremely sensitive information about ANYONE?
+-Social Security Numbers
+-Bank Account Numbers
+-Credit Card Numbers
+-Photos of government identification paperwork (passport, driver's license, birth certificate, death certificate, etc.)
+-Tax returns
+
+If YES → Use probability 0.90-1.00 max, skip all other rules
+
+**STEP 2: CHECK FOR SELF-DISCLOSURE**
 Is the author sharing information about THEMSELVES?
 - First person language ("I live", "my address", "I work", "Hi, I'm...")
 - Author introducing themselves  
@@ -37,20 +53,15 @@ Is the author sharing information about THEMSELVES?
 
 If YES → Use probability 0.05-0.25 max, skip all other rules
 
-**STEP 2: CHECK FOR PUBLIC FIGURE + PUBLIC INFO**
+**STEP 3: CHECK FOR PUBLIC FIGURE + PUBLIC INFO**
 Is this about a well-known PUBLIC FIGURE sharing ALREADY PUBLIC information?
 - That includes politicians, celebrities, singers, musicians, anyone who is
 widely known on the web
 
 If YES → Use probability 0.05-0.10 max, skip step 3
 
-**STEP 3: APPLY NORMAL DOXXING ASSESSMENT**
+**STEP 4: APPLY NORMAL DOXXING ASSESSMENT**
 Only for PRIVATE INDIVIDUALS having their PRIVATE information shared by others.
-
-ANALYZE THIS DISCORD MESSAGE FOR DOXXING:
-
-AUTHOR: {author_name}
-MESSAGE: "{message_content}"
 
 === PUBLIC FIGURE OVERRIDE RULES (HIGHEST PRIORITY) ===
 
@@ -64,10 +75,12 @@ MESSAGE: "{message_content}"
 **EXCEPTION: If encouraging harassment of public figure → 0.50-0.70:**
 - "Let's go confront Trump at Mar-a-Lago" → 0.60 (harassment intent)
 
-ANALYZE THIS DISCORD MESSAGE FOR DOXXING:
+**EXCEPTION: If sharing current location at a non-public event
+-"Jay Z is at the Starbucks by my house right now!!" (public figure, non-public event)
 
-AUTHOR: {author_name}
-MESSAGE: "{message_content}"
+**EXCEPTION: If sharing non-public personal information
+-"Rihanna's address is 1948 Southview Drive" (public figure, information that is kept private)
+-"John Green's therapist is Michael Ray" (public figure, private health information)
 
 === DOXXING PROBABILITY ASSESSMENT FRAMEWORK ===
 
@@ -83,11 +96,12 @@ HIGH-PROBABILITY DOXXING INDICATORS (0.85-1.0):
 • Threats to release or search for any of the above information (including in exchange for favors or money)
 
 MEDIUM-PROBABILITY PRIVACY CONCERNS (0.5-0.84):
-• Partial personal information that could enable targeting
+• Partial personal information that could enable targeting, including medical information
 • Professional info shared with malicious context
 • Location data that narrows down private residence
 • Social media accounts of private individuals
-• Information that enables further stalking/harassment
+• Specific workplace information
+• Information that enables further stalking/harassment (including encouragements for harrassments based on location and information about daily routines)
 
 LOW-PROBABILITY INDICATORS (0.1-0.49):
 • Vague personal references without specific identifiers
@@ -223,6 +237,7 @@ If the message doesn't make sense, and you don't understand it, it's probably lo
 • "Jeff Bezos owns the $165M Warner Estate in Beverly Hills, bought in 2020 — it was all over the news."
 • "Elon Musk’s office is at Tesla HQ, 3500 Deer Creek Rd, Palo Alto, CA — that’s the registered business address."
 • "Mark Zuckerberg lives in Palo Alto, near Crescent Park. His address was part of a lawsuit — it’s public record now."
+
 
 Respond with ONLY valid JSON:
 {{
@@ -383,6 +398,7 @@ class ProcessingGeminiResponse:
 
         # High confidence: post will be automatically deleted
         if confidence > 0.84:
+            foo, risk_number = self._get_risk_values(risk_level.lower(), 0)
             embed = discord.Embed(
                 title=f"Post Automatically Removed for Doxxing: {risk_level} Risk",
                 timestamp=datetime.now() # Timestamp of when the report was initiated
@@ -398,15 +414,15 @@ class ProcessingGeminiResponse:
 
             embed.add_field(name="**Result**", value="✅ **Automatic Action Taken:** Message deleted and user notified.", inline=False)
                         
-            return embed, bot_report.strip(), None, confidence, None
+            return embed, bot_report.strip(), risk_number, confidence, None
         
         # Medium confidence: post will be sent for manual review
-        if confidence > 0.5:
+        if confidence >= 0.7:
             doxxing_score = 0
             if who_doxxed != "Unknown":
                 doxxing_score = victim_score(who_doxxed)
 
-            embed_color, risk_number = self._get_risk_values(risk_level, doxxing_score)
+            embed_color, risk_number = self._get_risk_values(risk_level.lower(), doxxing_score)
 
             embed = discord.Embed(
                 title=f"Added by Bot to Review Queue: {risk_level} Doxxing Risk, medium confidence",
@@ -424,7 +440,8 @@ class ProcessingGeminiResponse:
 
             embed.add_field(name="**Doxxing Information Types Reported**", value=', '.join(info_types) if info_types else 'Various personal details', inline=False)
                 
-            embed.add_field(name="**Harm Assessment**", value=harm_level.title(), inline=False)
+            embed.add_field(name="**Harm Assessment**", value=harm_level.title(), inline=True)
+            embed.add_field(name="**Risk Level**", value=risk_number, inline=True)
                 
             embed.add_field(name="**Direct Link to Reported Message**", value=f"[Click to View Message]({self.message.jump_url})", inline=False)
 
@@ -439,20 +456,20 @@ class ProcessingGeminiResponse:
         """
         color = 0x95a5a6
         number = 1
-        if risk == "Minimal" or (doxxing_score > 0 and doxxing_score < 10):
+        if risk == "minimal" or (doxxing_score > 0 and doxxing_score < 10):
             color = 0x3498db   # Blue
-        elif risk == "Low" or doxxing_score < 30:
+        elif risk == "low" or doxxing_score < 30:
             color = 0xf1c40f   # Yellow
-        elif risk == "Medium" or doxxing_score < 50:
+        elif risk == "medium" or doxxing_score < 50:
             color = 0xe67e22   # Orange
-        elif risk == "High" or doxxing_score > 0:
+        elif risk == "high" or doxxing_score > 0:
             color = 0xe74c3c   # Red
-        if risk == "Minimal":
+        if risk == "minimal":
             number = 1
         elif risk == "Low":
             number = 2
-        elif risk == "Medium":
+        elif risk == "medium":
             number = 3
-        elif risk == "High":
+        elif risk == "high":
             number = 4
         return color, number  # Grey (default/unknown)

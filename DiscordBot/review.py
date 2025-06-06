@@ -4,7 +4,7 @@ import discord
 import re
 import asyncio
 from datetime import datetime, timedelta
-from supabase_helper import insert_victim_log
+from supabase_helper import insert_victim_log, insert_perpetrator_log, get_perpetrator_score
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -15,9 +15,6 @@ class InfoType(Enum):
     ID = "ID Information"
     EXPLICIT = "Explicit Content"
     OTHER = "Other"
-
-class Severity(Enum):
-    URGENT = "Urgent"
 
 class State(Enum):
     REVIEW_START = auto()
@@ -35,7 +32,7 @@ class State(Enum):
     
 
 class Review:
-    PASSWORD = "alison"
+    PASSWORD = "modpassword"
     CANCEL_KEYWORD = "-l"
     HELP_KEYWORD = "-h"
     POLICY_KEYWORD = "-p"
@@ -50,6 +47,8 @@ class Review:
         # Shared variables
         self.reports = client.reviewing_queue
         self.ai_reports = client.ai_reports
+        self.warned = client.warned
+        self.mod_channel = None
 
         # Variables specific to report info
         self.report = None
@@ -70,6 +69,8 @@ class Review:
         self.remove = False
         self.suspend_user = False
         self.ban_user = False 
+        self.risk_level = 1
+        self.report_risk_level = None
 
         # Stored Discord objects for performing moderation actions- these are fetched based on information in the report_details embed
         self.original_reported_message = None 
@@ -146,9 +147,9 @@ class Review:
                                         valid_message = True
                                     # Message was already deleted - program will move on to examine the next report without putting this back in the queue
                                     except discord.errors.NotFound:
-                                        mod_channel = self.client.mod_channels.get(self.guild_id)
+                                        self.mod_channel = self.client.mod_channels.get(self.guild_id)
                                         if mod_channel:
-                                            await mod_channel.send("A report was removed from the queue due to the post being deleted.")
+                                            await self.mod_channel.send("A report was removed from the queue due to the post being deleted.")
 
                             # Get reporter name to send updates once review is completed (non-bot reports only)
                             if field.name == "**Filed By (Reporter)**":
@@ -156,6 +157,8 @@ class Review:
                                 if reporter != "MODERATOR BOT":
                                     m = re.search(r'\d+', reporter)
                                     self.reporter = await self.client.fetch_user(m[0])
+                            if field.name == "**Risk Level**":
+                                self.report_risk_level = int(field.value)
                             
                             # Store other report-specific variables
                             if field.name == "**Specific Reason Provided by Reporter**":
@@ -163,6 +166,11 @@ class Review:
                             if field.name == "**Victim Name**":
                                 self.victim_name = field.value
                         if not valid_message:
+                            self.abuse_type = None
+                            self.victim_name = None
+                            self.reporter = None
+                            self.guild_id = None
+                            self.original_reported_message = None
                             continue
 
                         # Valid report found; continue to ask about threats
@@ -212,7 +220,8 @@ class Review:
             if message.content == "1":
                 self.threat_identified_by_reviewer = True
                 self.remove = True
-                self.suspend_user = True
+                self.risk_level = 4
+                # self.suspend_user = True
             elif message.content == "2": 
                 self.threat_identified_by_reviewer = False
             else:
@@ -234,22 +243,22 @@ class Review:
         elif self.state == State.AWAITING_OTHER_ABUSE_JUDGEMENT:
             if message.content == "1": 
                 self.remove = True
-
+                self.risk_level = self.report_risk_level
                 # Threat variables were not set earlier for "Credible Threat of Violence" (to remove redundancy) - needs to be done here
                 if self.abuse_type == "Credible Threat of Violence":
                     self.threat_identified_by_reviewer = True
-                    self.suspend_user = True
+                    # self.suspend_user = True
 
             # Confirmation message for non-doxxing review confirmation
             self.state = State.CONFIRMING_REVIEW
             if self.threat_identified_by_reviewer:
                     self.state = State.CONFIRMING_REVIEW
-                    reply = ("Threat identified. Policy: Message removal & 1-day user suspension.\n\n" 
+                    reply = ("Threat identified. Policy: Message removal & action against account.\n\n" 
                             "Confirm review and actions?\n1. Yes (Proceed)\n2. No (Cancel Review)")
             else: 
                 reply = ("Review assessment (no direct threat ID'd by you):\n")
                 if self.remove:
-                    reply += f"- {self.report['**Specific Reason Provided by Reporter**']} content was identified.\n"
+                    reply += f"- {self.abuse_type} content was identified.\n"
                     reply += "- This will be logged. The post will be removed.\n"
                 else: 
                     reply += "- No direct threat or other significant problematic content was flagged by you.\n"
@@ -263,7 +272,8 @@ class Review:
                 # Disallowed info present
                 self.disallowed_info_identified = True
                 self.remove = True
-                self.suspend_user = True
+                # self.suspend_user = True
+                self.risk_level += 2
             elif message.content == "2":
                 self.disallowed_info_identified = False
             else:
@@ -328,7 +338,7 @@ If you are unsure, click on the message link to view the message in context befo
                 else:
                     # Ask moderator to manually enter victim name
                     self.state = State.AWAITING_NAME
-                    reply = "There is no victim name attached to this report. Please type the full name of the person being doxxed so the incident is accurately stored in our database."
+                    reply = "There is no victim name attached to this report. Please type the full name of the person being doxxed so the incident is accurately stored in our database. If you cannot tell the real name of the victim, type `Unknown`"
                     return [reply]
     
             elif message.content != "1":
@@ -404,7 +414,8 @@ If you are unsure, click on the message link to view the message in context befo
                     # Include perpetrator information when logging victim
                     perpetrator_id = str(self.original_reported_message.author.id) if self.original_reported_message and self.original_reported_message.author else None
                     perpetrator_name = self.original_reported_message.author.display_name if self.original_reported_message and self.original_reported_message.author else None
-                    insert_victim_log(self.victim_name, self.timestamp, perpetrator_id, perpetrator_name)
+                    if self.victim_name != "Unknown":
+                        insert_victim_log(self.victim_name, self.timestamp, perpetrator_id, perpetrator_name)
                 await message.author.send("Finalizing your review...")
                 await self._submit_report_to_mods()
                 self.state = State.REVIEW_COMPLETE
@@ -427,7 +438,7 @@ If you are unsure, click on the message link to view the message in context befo
 
         # Prepare update messages for reporter and (potential) offender
         original_content = f"```{self.original_reported_message.content[:1000]}```" + ("... (truncated)" if len(self.original_reported_message.content) > 1000 else "")
-        action_for_reporter = f"Your report of the following post has been reviewed:\nReason for report: {self.abuse_type.lower()}\n{original_content}\n"
+        action_for_reporter = f"Your report of the following post has been reviewed:\nReason for report: {self.abuse_type.lower()}\n"
         action_for_offender = ""
         
         if not self.original_reported_message or not self.original_reported_message.author:
@@ -441,6 +452,8 @@ If you are unsure, click on the message link to view the message in context befo
                 actions_taken_summary_list.append("Original message **deleted**.")
                 action_for_reporter += "The message is now deleted."
                 action_for_offender += f"The following message of yours was reported as {self.abuse_type.lower()}:\n{original_content}\nAs a result of this report, your message was deleted."
+                insert_perpetrator_log(str(self.original_reported_message.author.id), self.original_reported_message.author.display_name, datetime.now(), self.victim_name, self.risk_level)
+                await self._send_appropriate_warning()
             except discord.Forbidden:
                 actions_taken_summary_list.append("Bot **failed to delete** message (Permissions error).")
                 action_for_reporter += "Unfortunately, the message could not be deleted due to server errors. We will work to fix this."
@@ -452,23 +465,23 @@ If you are unsure, click on the message link to view the message in context befo
                 action_for_reporter += "Unfortunately, the message could not be deleted due to server errors. We will work to fix this."
 
         # Attempt to suspend user if appropriate
-        if self.suspend_user:
-            if isinstance(self.original_reported_message.author, discord.Member):
-                try:
-                    timeout_duration = timedelta(days=1)
-                    actions_taken_summary_list.append(f"User `{self.original_reported_message.author.mention}` **would be suspended for 1 day** (TESTING - action disabled).")
-                    action_for_reporter += " Action has been taken against the user."
-                    action_for_offender += " Your account has also been suspended for 1 day."
-                except discord.Forbidden:
-                    actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_reported_message.author}` (Permissions error).")
-                except discord.HTTPException as e:
-                    actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_reported_message.author}` (HTTP Error: {e.status}).")
-            else:
-                actions_taken_summary_list.append(f"User `{self.original_reported_message.author}` **could not be suspended** (not a current server member).")
+        # if self.suspend_user:
+        #     if isinstance(self.original_reported_message.author, discord.Member):
+        #         try:
+        #             timeout_duration = timedelta(days=1)
+        #             actions_taken_summary_list.append(f"User `{self.original_reported_message.author.mention}` **would be suspended for 1 day** (TESTING - action disabled).")
+        #             action_for_reporter += " Action has been taken against the user."
+        #             action_for_offender += " Your account has also been suspended for 1 day."
+        #         except discord.Forbidden:
+        #             actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_reported_message.author}` (Permissions error).")
+        #         except discord.HTTPException as e:
+        #             actions_taken_summary_list.append(f"Bot **failed to suspend** user `{self.original_reported_message.author}` (HTTP Error: {e.status}).")
+        #     else:
+        #         actions_taken_summary_list.append(f"User `{self.original_reported_message.author}` **could not be suspended** (not a current server member).")
 
         # Report was rejected, send update only to reporter
         if not actions_taken_summary_list: 
-            action_for_reporter += f"The moderation team does not believe your post falls under the category listed. No action was taken."
+            action_for_reporter += f"\n{original_content}\nThe moderation team does not believe your post falls under the category listed. No action was taken."
             actions_taken_summary_list.append("No automated actions (delete/suspend) triggered (e.g., no direct threat ID'd by reviewer).")
 
         # Abuse detected. Send updates to reporter (if non-bot) and offender.
@@ -478,6 +491,64 @@ If you are unsure, click on the message link to view the message in context befo
             await self.original_reported_message.author.send(action_for_offender + " Future offenses may result in further action taken against your account. We recommend reviewing our platform policies to ensure you avoid future violations.")
 
         return actions_taken_summary_list
+
+    async def _send_appropriate_warning(self):
+        author = self.original_reported_message.author
+        perp_score = get_perpetrator_score(str(author.id))
+        print(perp_score)
+        if perp_score < 3 and author.id in self.warned:
+            self.warned.remove(author.id)
+        # Check for consequences based on harassment count
+        if perp_score >= 3 and (perp_score < 5 or author.id not in self.warned):
+            # Send warning card to channel
+            warning_embed = discord.Embed(
+                title="**Official Warning**",
+                color=0xf1c40f,  # Yellow
+                timestamp=datetime.now()
+            )
+            warning_embed.add_field(name="**User**", value=f"{author.mention} (`{author.display_name}`, ID: `{author.id}`)", inline=False)
+            warning_embed.add_field(name="**Action**", value="**Warning Issued**", inline=True)
+            warning_embed.add_field(name="**Reason**", value="Multiple or severe doxxing violations detected by automated system", inline=True)
+            warning_embed.add_field(name="**Notice**", value="Continued violations may result in suspension. Please review community guidelines.", inline=False)
+            warning_embed.set_footer(text="Automated Moderation System")
+            
+            await author.send(embed=warning_embed)
+            await self.mod_channel.send(f"User {author.mention} was sent a warning.")
+            self.warned.add(author.id)
+            
+        elif perp_score >= 5 and perp_score < 10:
+            # Send suspension notification card to channel
+            suspension_embed = discord.Embed(
+                title="**Suspension Notice**",
+                color=0xe74c3c,  # Red
+                timestamp=datetime.now()
+            )
+            suspension_embed.add_field(name="**User**", value=f"{author.mention} (`{author.display_name}`, ID: `{author.id}`)", inline=False)
+            suspension_embed.add_field(name="**Action**", value="**Suspension Issued**", inline=True)
+            suspension_embed.add_field(name="**Reason**", value="Persistent doxxing violations detected by automated system", inline=True)
+            suspension_embed.add_field(name="**Note**", value="**This is a demonstration.** In a live environment, this account would have user privileges restricted for three (3) days. Future offenses may result in further account action.", inline=False)
+            suspension_embed.set_footer(text="Automated Moderation System")
+            
+            await author.send(embed=suspension_embed)
+            await self.mod_channel.send(f"User {author.mention} was suspended for three (3) days.")
+            self.warned.add(author.id)
+        
+        elif perp_score > 10:
+            # Send suspension notification card to channel
+            suspension_embed = discord.Embed(
+                title="**Account Banned Notice**",
+                color=0xe74c3c,  # Red
+                timestamp=datetime.now()
+            )
+            suspension_embed.add_field(name="**User**", value=f"{author.mention} (`{author.display_name}`, ID: `{author.id}`)", inline=False)
+            suspension_embed.add_field(name="**Action**", value="**Ban Issued**", inline=True)
+            suspension_embed.add_field(name="**Reason**", value="Persistent doxxing violations detected by automated system after suspension", inline=True)
+            suspension_embed.add_field(name="**Note**", value="**This is a demonstration.** In a live environment, this account would be banned from the platform.", inline=False)
+            suspension_embed.set_footer(text="Automated Moderation System")
+            
+            await author.send(embed=suspension_embed)
+            await self.mod_channel.send(f"User {author.mention} was banned from the platform.")
+            self.warned.add(author.id)
 
     async def _submit_report_to_mods(self):
         """
@@ -524,20 +595,20 @@ If you are unsure, click on the message link to view the message in context befo
         elif (self.disallowed_info_identified or self.other_pii_identified): 
             embed_title, embed_color = "Review: Findings Logged", discord.Color.blue()
 
-        mod_channel = self.client.mod_channels.get(self.guild_id)
+        self.mod_channel = self.client.mod_channels.get(self.guild_id)
         if not mod_channel:
             return
 
         review_embed = discord.Embed(title=embed_title, description=final_summary_text, color=embed_color, timestamp=datetime.now())
         review_embed.set_footer(text=f"Review by: {reviewer_name} | Bot v2.2")
         try:
-            await mod_channel.send(embed=review_embed)
+            await self.mod_channel.send(embed=review_embed)
             if self.reports.empty():
-                await mod_channel.send(f"There are no more reports to review. Amazing work, everyone!")
+                await self.mod_channel.send(f"There are no more reports to review. Amazing work, everyone!")
             elif self.reports.qsize() == 1:
-                await mod_channel.send(f"There is now {self.reports.qsize()} report left to review.")
+                await self.mod_channel.send(f"There is now {self.reports.qsize()} report left to review.")
             else:
-                await mod_channel.send(f"There are now {self.reports.qsize()} reports left to review.")
+                await self.mod_channel.send(f"There are now {self.reports.qsize()} reports left to review.")
         except discord.Forbidden:
             pass
         except discord.HTTPException as e:
