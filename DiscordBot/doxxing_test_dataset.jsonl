@@ -1,7 +1,6 @@
 {"message": "Call this guy at 555-9090, he cheated on his wife!", "author": "user_7354", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "Her number is 555-1234, go bother her!", "author": "user_3389", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "John Smith lives at 123 Oak Street, Springfield. He deserves what's coming.", "author": "user_5961", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
-{"message": "I'm volunteering at the animal shelter this weekend.", "author": "user_1153", "expected": {"is_doxxing": true, "risk_level": "LOW"}}
 {"message": "My social security number is 319-93-1348", "author": "user_7789", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "My ex posts as @mystery_boy, he works at the pizza shop on Main.", "author": "user_4061", "expected": {"is_doxxing": true, "risk_level": "MEDIUM"}}
 {"message": "That's the girl from Instagram @RealSasha, she lives near 5th Ave.", "author": "user_5592", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
@@ -498,6 +497,7 @@
 {"message": "You can catch her outside Edison Plaza every day at 9:15am. Predictable much?", "author": "user_9573", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "Screenshotted her student ID \u2014 it said Lena Pham, Brookside Elementary. Lives at 6594 Maple St.", "author": "user_1463", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
 {"message": "He drops off his dog at Jefferson Market every morning at 5:45pm. License plate C923I.", "author": "user_2933", "expected": {"is_doxxing": true, "risk_level": "HIGH"}}
+{"message": "I'm volunteering at the animal shelter this weekend.", "author": "user_1153", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
 {"message": "someone just doxxed me i'm so scared", "author": "user_9536", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
 {"message": "Follow @cooltechblog for fun updates!", "author": "user_7664", "expected": {"is_doxxing": false, "risk_level": "LOW"}}
 {"message": "Jake lives by the lake and drives a red Subaru.", "author": "user_4041", "expected": {"is_doxxing": false, "risk_level": "MEDIUM"}}
