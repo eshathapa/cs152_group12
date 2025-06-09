@@ -2,7 +2,7 @@
 
 ## Repository Details:
 
-This repository holds the code for CS152 Group 12's project on doxxing. The context of this platform is a feed-based platform, similar to X (formerly Twitter) and Facebook. The bot was coded using discord.py.
+This repository holds the code for CS152 Group 12's project on doxxing. The context of this platform is a feed-based platform, similar to X (formerly Twitter) and Facebook. The bot was coded using discord.py and created by CS152's Group 12 (Sara Bukair, Ismael Duran, Dilnaz Kamalova, Alison Rogers, Esha Thapa) at Stanford University, Spring 2025.
 
 ## Guide to Key Files:
 
@@ -36,7 +36,7 @@ Users will also receive updates via DM about the result of their reports, as wel
 
 ### Non-Moderator User Capabilities
 
-Users may send messages in the main guild channel, edit their own messages, report messages via DMing the bot, and ask the bot to see the platform-wide policy on doxxing.
+Users may send messages in the main guild channel, edit their own messages, report messages via DMing the bot, and ask the bot to see the platform-wide policy on doxxing. Users may report a message for a variety of abuses, though only the doxxing flow is thoroughly built out.
 
 ### Moderator Capabilities
 
@@ -49,6 +49,8 @@ Moderators interact with the bot via DM to keep the moderator channel from being
 - Ask for a report to review
   - The moderator bot will send over if one is in the queue, the moderator does not need to search for a report in the moderator channel.
   - These reports will be sent to moderators automatically prioritized by recency, risk to victim, risk of information, and other metrics.
+
+Moderators may report a message for a variety of abuses, though only the doxxing flow is thoroughly built out.
 
 ### Bot Capabilities
 
