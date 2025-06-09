@@ -97,7 +97,11 @@ class Review:
             return [self.get_help_message()]
 
         if message.content.lower() == self.POLICY_KEYWORD:
-            return ["This is a placeholder for the doxxing policy."]
+            return ["""Below is our user-facing policy for doxxing:\n
+            Our platform supports the privacy of its users and prohibits the malicious spread of personally identifiable information (PII). We are actively employing automated and manual strategies to locate and take action against instances of doxxing in our community.\n
+            **Financial information, medical information, government ID numbers, and sensitive legal information are never allowed on our platform.** Additionally, we take strong action against personally identifiable **location and address information, contact information, workplace details, and any personal data intended to harass or cause harm** shared on our platform. This includes soliciting, threatening to share, or providing links to PII. We also take action against sharing external websites or images that increase the spread of PII.\n
+            We understand that **context matters**. Self-disclosures, satirical posts, business information, and public location information may be harmless. We encourage our users to focus on sharing information that is public and in good faith. However, even with public information, malicious intent or the **potential for harm** are still grounds for a violation.\n
+            Actions we may take in response to doxxing include **removing content, limiting user privileges, and referring to law enforcement.** Specific actions taken may depend on the severity of the offense and account disciplinary history and may result in account suspension or termination. When deciding whether to take action, we will consider the type of information shared, whether the person consented to information being revealed, the intent behind the post, the potential for harm, and escalating behavior or patterns. Appeals for an account or post to be reinstated are reviewed by a human moderator to ensure fair decision-making. We encourage all users to think carefully before they post."""]
         
         if message.content.split(" ")[0].lower() == self.DETAILS_KEYWORD:
             tokens = message.content.split(" ")
@@ -116,7 +120,7 @@ class Review:
             reply += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
             reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
             reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
-            reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+            reply += f"- Type `{self.POLICY_KEYWORD}` to read our user-facing doxxing policy.\n"
             reply += f"To begin a review, type `{self.REVIEW_KEYWORD}`\n"
             self.state = State.AWAITING_CONTINUE
             return [reply]
@@ -199,7 +203,7 @@ class Review:
                         reply += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
                         reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
                         reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
-                        reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+                        reply += f"- Type `{self.POLICY_KEYWORD}` to read our user-facing doxxing policy.\n"
                         reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out using `{self.CANCEL_KEYWORD}` and check back again later instead of immediately attempting again."
                         return [reply]
                 
@@ -209,7 +213,7 @@ class Review:
                 reply += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
                 reply += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
                 reply += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
-                reply += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+                reply += f"- Type `{self.POLICY_KEYWORD}` to read our user-facing doxxing policy.\n"
                 reply += f"You may attempt to review a report by typing `{self.REVIEW_KEYWORD}`. We recommend logging out using `{self.CANCEL_KEYWORD}` and check back again later instead of immediately attempting again."
                 return [reply]
             else:
@@ -620,7 +624,7 @@ If you are unsure, click on the message link to view the message in context befo
         help_msg += f"- Type `{self.HELP_KEYWORD}` to see a help message.\n"
         help_msg += f"- Type `{self.CANCEL_KEYWORD}` to log out of the review bot. This will cancel any in-progress reviews.\n"
         help_msg += f"- Type `{self.DETAILS_KEYWORD} [Evaluation ID]` to review a bot's doxxing evaluation.\n"
-        help_msg += f"- Type `{self.POLICY_KEYWORD}` to read our doxxing policy.\n"
+        help_msg += f"- Type `{self.POLICY_KEYWORD}` to read our user-facing doxxing policy.\n"
         
         if self.state == State.AWAITING_CONTINUE:
             help_msg += f"You have not begun a review yet. To begin a review, type `{self.REVIEW_KEYWORD}`\n\n"

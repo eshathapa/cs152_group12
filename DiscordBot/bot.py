@@ -8,7 +8,6 @@ import re
 import requests
 from report import Report
 from review import Review
-# from gemini_detector import GeminiDoxxingDetector, ProcessingGeminiResponse
 from claude_detector import ClaudeDoxxingDetector, ProcessingClaudeResponse
 import pdb
 import count as count_tool
@@ -45,18 +44,6 @@ class ModBot(discord.Client):
         self.unique = count(1)
         self.ai_reports = {} # Map from report counts to AI detailed reports
         self.warned = set()
-        
-        # AI: Initialize Gemini detector
-        # try:
-        #     self.gemini_detector = GeminiDoxxingDetector(
-        #         project_id=tokens['project_id'],
-        #         location=tokens.get('google_location', 'us-central1')
-        #     )
-        #     print("🤖 Gemini AI doxxing detector loaded successfully!")
-        # except Exception as e:
-        #     print(f"❌ Failed to initialize Gemini detector: {e}")
-        #     print("📝 Bot will continue without AI analysis")
-        #     self.gemini_detector = None
         try:
             self.gemini_detector = ClaudeDoxxingDetector()
             print("🤖 Claude AI doxxing detector loaded successfully!")
@@ -107,6 +94,16 @@ class ModBot(discord.Client):
         if message.content == Report.HELP_KEYWORD:
             reply =  "Use the `report` command to begin the reporting process.\n"
             reply += "Use the `cancel` command to cancel the report process.\n"
+            reply += "Use the  `policy` command to view our platform's policy on doxxing."
+            await message.channel.send(reply)
+            return
+
+        if message.author.id not in self.reviews and message.content.lower() == "policy":
+            reply = """Our doxxing policy is as follows:\n
+            Our platform supports the privacy of its users and prohibits the malicious spread of personally identifiable information (PII). We are actively employing automated and manual strategies to locate and take action against instances of doxxing in our community.\n
+            **Financial information, medical information, government ID numbers, and sensitive legal information are never allowed on our platform.** Additionally, we take strong action against personally identifiable **location and address information, contact information, workplace details, and any personal data intended to harass or cause harm** shared on our platform. This includes soliciting, threatening to share, or providing links to PII. We also take action against sharing external websites or images that increase the spread of PII.\n
+            We understand that **context matters**. Self-disclosures, satirical posts, business information, and public location information may be harmless. We encourage our users to focus on sharing information that is public and in good faith. However, even with public information, malicious intent or the **potential for harm** are still grounds for a violation.\n
+            Actions we may take in response to doxxing include **removing content, limiting user privileges, and referring to law enforcement.** Specific actions taken may depend on the severity of the offense and account disciplinary history and may result in account suspension or termination. When deciding whether to take action, we will consider the type of information shared, whether the person consented to information being revealed, the intent behind the post, the potential for harm, and escalating behavior or patterns. Appeals for an account or post to be reinstated are reviewed by a human moderator to ensure fair decision-making. We encourage all users to think carefully before they post."""
             await message.channel.send(reply)
             return
 
@@ -140,6 +137,7 @@ class ModBot(discord.Client):
             reply =  "I don't know what that command means.\n"
             reply +=  "Use the `report` command to begin the reporting process.\n"
             reply += "Use the `cancel` command to cancel the report process.\n"
+            reply += "Use the  `policy` command to view our platform's policy on doxxing."
             await message.channel.send(reply)
             return
 
