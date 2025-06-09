@@ -75,3 +75,12 @@ We tested our bot on two different LLMs: Gemini and Claude 3.5 Haiku. The result
 ## Demo Video:
 
 You may find a demo video of our bot's functionality at [this Google Drive link](https://drive.google.com/file/d/1GqUQ0GqNsCQb8rSyFxAVnt7wuZ4r1Mg2/view?usp=sharing).
+
+## AI Citation:
+
+In this project, AI was used to:
+
+- Add comments to initial draft of `run_gemini_test.py` (which has since been completely rewritten without using AI)
+- Debug issues connecting initial draft of `run_gemini_test.py`
+- Generate testing based on handwritten examples and edge cases, as there are are no publicly available datasets on doxxing available. Some generated posts were also used in prompt engineering.
+- Debugging Gemini API connectivity and `check_connection.py`
